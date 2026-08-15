@@ -1,0 +1,169 @@
+/* Container layout spanning full top bar */
+.top-nav-container {
+  display: flex !important;
+  flex-direction: row !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  height: 64px;
+  padding: 0 16px;
+  box-sizing: border-box;
+  background-color: #131314;
+  border-bottom: 1px solid #28292a;
+}
+
+/* Left: Logo Section */
+.top-nav-left {
+  display: flex;
+  align-items: center;
+  min-width: 180px;
+  flex-shrink: 0;
+}
+
+.top-nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.top-nav-title {
+  font-weight: 500;
+  color: #e3e2e6;
+  font-size: 1.25rem;
+}
+
+/* Center: Search Field Container */
+.top-nav-center {
+  flex: 1;
+  max-width: 680px;
+  margin: 0 16px;
+  display: flex;
+  justify-content: center;
+}
+
+.search-input-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.google-search-field .MuiOutlinedInput-root {
+  background-color: #1e1f20;
+  color: #e3e2e6;
+  border-radius: 28px;
+  height: 48px;
+  padding-left: 12px;
+}
+
+.google-search-field .MuiOutlinedInput-root fieldset {
+  border: none;
+}
+
+.google-search-field .MuiOutlinedInput-root:hover {
+  background-color: #28292a;
+}
+
+.google-search-field input::placeholder {
+  color: #c4c6d0;
+  opacity: 0.8;
+}
+
+/* Right: Settings & Profile Section */
+.top-nav-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 180px;
+  justify-content: flex-end;
+  flex-shrink: 0;
+}
+
+.nav-icon-btn {
+  padding: 8px;
+}
+
+.top-nav-avatar {
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  border: 1px solid #333538;
+}
+
+/* Floating Search Dropdown */
+.search-dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  background-color: #1e1f20;
+  border: 1px solid #333538;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  max-height: 320px;
+  overflow-y: auto;
+  z-index: 1000;
+  padding: 6px;
+}
+
+.dropdown-label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 6px 12px 4px 12px;
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.dropdown-item:hover {
+  background-color: #28292a;
+}
+
+.dropdown-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  background-color: #334155;
+}
+
+.dropdown-info {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.dropdown-name {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #e3e2e6;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dropdown-email {
+  font-size: 0.75rem;
+  color: #94a3b8;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.invite-action {
+  background-color: rgba(168, 199, 250, 0.08);
+}
+
+.invite-action:hover {
+  background-color: rgba(168, 199, 250, 0.16);
+}
