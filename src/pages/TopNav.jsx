@@ -14,7 +14,7 @@ import { initInviteSocketListeners } from './socketListener';
 export function TopNav({ handleSendInvite }) {
   const user = JSON.parse(localStorage.getItem('user'));
   const searchTimerRef = useRef(null);
-  const { contacts,socket,setSelectedChat,setContacts} = useChat();
+  const { contacts,reqContacts,socket,setSelectedChat,setContacts,setIsRejecting,setReqContacts} = useChat();
 
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredContacts, setFilteredContacts] = useState([]);
@@ -55,18 +55,20 @@ export function TopNav({ handleSendInvite }) {
       setSearchLevel(0);
       return;
     }
+// 💡 FIX 1: Ensure both are arrays before combining
+const safeContacts = Array.isArray(contacts) ? contacts : [];
+const safeReqContacts = Array.isArray(reqContacts) ? reqContacts : [];
 
-    // 💡 FIX 1: Ensure 'contacts' is an array before calling .filter()
-    const safeContacts = Array.isArray(contacts) ? contacts : [];
+// Combine both arrays so search searches across both
+const allContactsToSearch = [...safeContacts, ...safeReqContacts];
 
-    // 💡 FIX 2: Correct property paths (item.contact.name, item.contact.email)
-    const localMatches = safeContacts.filter((item) => {
-      const contactObj = item?.contact || {};
-      const name = (contactObj.name || item.name || '').toLowerCase();
-      const email = (contactObj.email || item.email || '').toLowerCase();
-      return name.includes(trimmed) || email.includes(trimmed);
-    });
-
+// 💡 FIX 2: Filter across all combined contacts
+const localMatches = allContactsToSearch.filter((item) => {
+  const contactObj = item?.contact || {};
+  const name = (contactObj.name || item.name || '').toLowerCase();
+  const email = (contactObj.email || item.email || '').toLowerCase();
+  return name.includes(trimmed) || email.includes(trimmed);
+});
     if (localMatches.length > 0) {
       setFilteredContacts(localMatches);
       setSearchLevel(0);
@@ -111,15 +113,18 @@ export function TopNav({ handleSendInvite }) {
   };
 
 useEffect(() => {
-    if (!socket) return;
+  if (!socket) return;
 
-    console.log('🔌 Registering invite socket listeners in TopNav...');
-    const cleanup = initInviteSocketListeners(socket, setContacts);
+  const cleanup = initInviteSocketListeners(
+    socket,
+    setContacts,
+    setReqContacts,
+    setSelectedChat,
+    setIsRejecting
+  );
 
-    return () => {
-      cleanup();
-    };
-  }, [socket, setContacts]);
+  return () => cleanup();
+}, [socket, setContacts, setReqContacts, setSelectedChat, setIsRejecting]);
 
   return (
     <header className="top-nav-container">

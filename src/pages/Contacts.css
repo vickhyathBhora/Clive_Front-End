@@ -1,5 +1,4 @@
 .contacts-container {
-  padding: 16px;
   height: 100%;
   box-sizing: border-box;
 }
@@ -13,7 +12,9 @@
   transition: background-color 0.2s ease;
   cursor: pointer;
 }
-
+.contact-item{
+  margin:20px;
+}
 .contact-card:hover {
   background-color: #28292a;
 }

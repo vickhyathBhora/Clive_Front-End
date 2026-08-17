@@ -36,19 +36,18 @@ html, body, #root {
   padding: 0 16px 16px 0;
   box-sizing: border-box;
   overflow: hidden;
+  margin-top:20px;
 }
 
 /* Contacts Sidebar */
 .contacts-section {
-  width: 280px;
-  min-width: 260px;
-  max-width: 320px;
+  min-width: 400px;
   height: 100%;
   background-color: #131314;
   display: flex;
   flex-direction: column;
   overflow-y: auto;
-  padding-left: 8px;
+  padding: 8px;
 }
 
 /* Messages Curved Inner Window (Google Chat Style) */

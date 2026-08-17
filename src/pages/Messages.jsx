@@ -3,7 +3,24 @@ import { useChat } from './ChatContext';
 import { initMessagesSocketListeners } from './socketListener';
 
 export const Messages = () => {
-  const { messages, setMessages, selectedChat, socket, user } = useChat();
+  const { messages, setMessages, selectedChat, socket, user , isAccepting,setIsAccepting, setIsRejecting,isRejecting} = useChat();
+
+
+
+const handleAccept = () => {
+  if (isAccepting || isRejecting || !selectedChat?.contact.id) return;
+
+  setIsAccepting(true);
+  socket.emit('accept_invite', { contactId: selectedChat.contact.id });
+};
+
+const handleReject = () => {
+  if (isAccepting || isRejecting || !selectedChat?.contact.id) return;
+
+  setIsRejecting(true);
+  socket.emit('reject_invite', { contactId: selectedChat.contact.id });
+};
+
 
   // 1. Get current logged-in user ID
   const storedUser = JSON.parse(localStorage.getItem('user') || '{}');
@@ -58,18 +75,37 @@ export const Messages = () => {
         <h3>Connection Request</h3>
         <p><strong>{contactName}</strong> sent you a connection request.</p>
         <div className="action-buttons" style={{ marginTop: '15px', display: 'flex', gap: '10px' }}>
-          <button 
-            style={{ padding: '8px 16px', background: '#22c55e', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
-            onClick={() => socket.emit('accept_invite', { contactId: selectedChat.contact_id })}
-          >
-            Accept
-          </button>
-          <button 
-            style={{ padding: '8px 16px', background: '#ef4444', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
-            onClick={() => socket.emit('reject_invite', { contactId: selectedChat.contact_id })}
-          >
-            Reject
-          </button>
+        <button 
+  style={{ 
+    padding: '8px 16px', 
+    background: isAccepting || isRejecting ? '#86efac' : '#22c55e', 
+    color: '#fff', 
+    border: 'none', 
+    borderRadius: '4px', 
+    cursor: isAccepting || isRejecting ? 'not-allowed' : 'pointer',
+    opacity: isAccepting || isRejecting ? 0.7 : 1
+  }}
+  disabled={isAccepting || isRejecting}
+  onClick={handleAccept}
+>
+  {isAccepting ? 'Accepting...' : 'Accept'}
+</button>
+
+<button 
+  style={{ 
+    padding: '8px 16px', 
+    background: isAccepting || isRejecting ? '#fca5a5' : '#ef4444', 
+    color: '#fff', 
+    border: 'none', 
+    borderRadius: '4px', 
+    cursor: isAccepting || isRejecting ? 'not-allowed' : 'pointer',
+    opacity: isAccepting || isRejecting ? 0.7 : 1
+  }}
+  disabled={isAccepting || isRejecting}
+  onClick={handleReject}
+>
+  {isRejecting ? 'Rejecting...' : 'Reject'}
+</button>
         </div>
       </div>
     );

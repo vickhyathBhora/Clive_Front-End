@@ -1,4 +1,3 @@
-// socketListener.js
 
 /**
  * Initializes socket listeners for contact-related operations (delete contact, clear history).
@@ -26,36 +25,18 @@ export const initContactsSocketListeners = (socket, setContacts) => {
     }
   };
 
-  // 2. Handle delete chat response -> CLEAR MESSAGES & MOVE TO LAST POSITION
-  const handleChatRes = (response) => {
-    console.log('📩 delete_chat_history_res response:', response);
+ const handleChatRes = (response) => {
+  console.log('📩 delete_chat_history_res response:', response);
 
-    if (response?.success) {
-      if (setContacts) {
-        setContacts((prevContacts) => {
-          const targetId = response.targetId;
-          const targetIndex = prevContacts.findIndex((item) => {
-            const id = item.contact?.id || item.contact_id || item.id;
-            return String(id) === String(targetId);
-          });
-
-          // If target contact isn't found, keep array unchanged
-          if (targetIndex === -1) return prevContacts;
-
-          const updated = [...prevContacts];
-          const [targetContact] = updated.splice(targetIndex, 1);
-
-          // Clear messages and push to the end of the array
-          targetContact.messages = [];
-          updated.push(targetContact);
-
-          return updated;
-        });
-      }
-    } else {
-      console.error('Delete chat history failed:', response?.message);
+  if (response?.success) {
+    // Directly clear active message state
+    if (setMessages) {
+      setMessages([]);
     }
-  };
+  } else {
+    console.error('Delete chat history failed:', response?.message);
+  }
+};
 
   // Register contact listeners
   socket.on('delete_contact_res', handleContactRes);
@@ -97,36 +78,63 @@ export const initMessagesSocketListeners = (socket, setMessages) => {
     socket.off('get_messages_res', handleGetMessagesRes);
   };
 };
-/**
- * Socket listener for TopNav to handle invite responses and new incoming invites.
- * 
- * @param {Object} socket - Active Socket.io instance
- * @param {Function} setContacts - React setContacts state dispatcher
- * @returns {Function} Cleanup function
- */
-export const initInviteSocketListeners = (socket, setContacts) => {
- 
+export const initInviteSocketListeners = (
+  socket, 
+  setContacts, 
+  setReqContacts, 
+  setSelectedChat, 
+  setIsRejecting
+) => {
   if (!socket) return () => {};
 
   const handleInvite = (response) => {
     console.log('📩 Invite socket event received:', response);
 
-    // Extract the contact object (handles both wrapped { success, contact } and direct object)
     const incomingContact = response?.contact || response;
 
     if (!incomingContact) return;
 
-    // Set contacts to [z, a, b, c, d, e] (new contact prepended at index 0)
+    // Prepend new contact
     setContacts((prev) => [incomingContact, ...prev]);
+  };
+
+  const handleRejectInviteRes = (response) => {
+    console.log('❌ Reject invite response received:', response);
+
+    // Turn off rejecting loading state
+    setIsRejecting(false);
+
+  if (response?.success) {
+    const targetUserIdToRemove = response?.contactId;
+
+    if (setReqContacts && targetUserIdToRemove) {
+      setReqContacts((prev) =>
+        prev.filter((item) => {
+          // Check item.contact.id or fallback to item.id / item.initiated_by
+          const contactUserId = item?.contact?.id || item?.id || item?.initiated_by;
+          
+          // Keep items that DO NOT match the target contactId
+          return contactUserId !== targetUserIdToRemove;
+        })
+      );
+    }
+
+      // Clear the current selected chat
+      if (setSelectedChat) {
+        setSelectedChat(null);
+      }
+    }
   };
 
   // Register listeners
   socket.on('send_invite_res', handleInvite);
   socket.on('new_invite_received', handleInvite);
+  socket.on('reject_invite_res', handleRejectInviteRes);
 
   // Unregister listeners on cleanup
   return () => {
     socket.off('send_invite_res', handleInvite);
     socket.off('new_invite_received', handleInvite);
+    socket.off('reject_invite_res', handleRejectInviteRes);
   };
 };

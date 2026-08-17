@@ -1,0 +1,157 @@
+import React from 'react';
+import {
+  IconButton,
+  Menu,
+  MenuItem,
+  ListItemIcon,
+  ListItemText,
+  CircularProgress
+} from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
+import ChatIcon from '@mui/icons-material/Chat';
+import PersonRemoveIcon from '@mui/icons-material/PersonRemove';
+
+const ContactMenu = ({
+  targetId,
+  activeMenu,
+  deletingId,
+  handleOpenMenu,
+  handleCloseMenu,
+  handleSelectOption
+}) => {
+  const isMenuOpen = activeMenu?.id === targetId;
+
+  return (
+    <div>
+      {/* Delete Trigger Button */}
+      <IconButton
+        color="error"
+        aria-label="delete options"
+        onClick={(e) => handleOpenMenu(e, targetId)}
+        disabled={deletingId === targetId}
+      >
+        {deletingId === targetId ? (
+          <CircularProgress size={24} color="error" />
+        ) : (
+          <DeleteIcon />
+        )}
+      </IconButton>
+
+      {/* Delete Options Menu */}
+      <Menu
+        anchorEl={activeMenu?.anchorEl}
+        open={isMenuOpen}
+        onClose={handleCloseMenu}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <MenuItem
+          onClick={(e) => handleSelectOption(e, targetId, 'chat')}
+        >
+          <ListItemIcon>
+            <ChatIcon fontSize="small" color="error" />
+          </ListItemIcon>
+          <ListItemText primary="Delete Chat" />
+        </MenuItem>
+
+        <MenuItem
+          onClick={(e) => handleSelectOption(e, targetId, 'contact')}
+        >
+          <ListItemIcon>
+            <PersonRemoveIcon fontSize="small" color="error" />
+          </ListItemIcon>
+          <ListItemText primary="Delete Contact" />
+        </MenuItem>
+      </Menu>
+    </div>
+  );
+};
+
+export default ContactMenu;
+
+
+
+
+
+ const [deletingId, setDeletingId] = useState(null);
+
+
+   const handleDeleteOption = async (targetId, actionType) => {
+    console.log(`Action: ${actionType} for Target ID: ${targetId}`);
+    setDeletingId(targetId);
+
+    try {
+      if (actionType === 'chat') {
+        if (socket) {
+          socket.emit('delete_chat_history', { targetId });
+        }
+      } else if (actionType === 'contact') {
+        if (socket) {
+          socket.emit('delete_contact', { targetId });
+        }
+      }
+    } catch (error) {
+      console.error('Failed to perform deletion:', error);
+    } finally {
+      setDeletingId(null);
+    }
+  };
+
+    const handleOpenMenu = (event, targetId) => {
+    event.stopPropagation();
+    setActiveMenu({ id: targetId, anchorEl: event.currentTarget });
+  };
+
+  // 3. Close menu
+  const handleCloseMenu = (event) => {
+    if (event) event.stopPropagation();
+    setActiveMenu(null);
+  };
+
+    // 4. Handle menu option choice
+  const handleSelectOption = (event, targetId, actionType) => {
+    event.stopPropagation();
+    handleCloseMenu(event);
+    handleDeleteOption(targetId, actionType);
+  };
+
+ <div>
+                  {/* Delete Trigger Button */}
+                  <IconButton
+                    color="error"
+                    aria-label="delete options"
+                    onClick={(e) => handleOpenMenu(e, targetId)}
+                    disabled={deletingId === targetId}
+                  >
+                    {deletingId === targetId ? (
+                      <CircularProgress size={24} color="error" />
+                    ) : (
+                      <DeleteIcon />
+                    )}
+                  </IconButton>
+
+                  {/* Delete Options Menu */}
+                  <Menu
+                    anchorEl={activeMenu?.anchorEl}
+                    open={isMenuOpen}
+                    onClose={handleCloseMenu}
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <MenuItem
+                      onClick={(e) => handleSelectOption(e, targetId, 'chat')}
+                    >
+                      <ListItemIcon>
+                        <ChatIcon fontSize="small" color="error" />
+                      </ListItemIcon>
+                      <ListItemText primary="Delete Chat" />
+                    </MenuItem>
+
+                    <MenuItem
+                      onClick={(e) => handleSelectOption(e, targetId, 'contact')}
+                    >
+                      <ListItemIcon>
+                        <PersonRemoveIcon fontSize="small" color="error" />
+                      </ListItemIcon>
+                      <ListItemText primary="Delete Contact" />
+                    </MenuItem>
+                  </Menu>
+                </div>
