@@ -12,7 +12,7 @@ import { useGoogleLogin } from '@react-oauth/google';
 import { useNavigate } from 'react-router-dom';
 import { apiPost } from '../utils/api';
 import { GOOGLE_AUTH_URL } from '../utils/constant';
-import './Portfolio.css'; // Importing external CSS file
+import './PortFolio.css'; // Importing external CSS file
 
 export function Portfolio() {
   const navigate = useNavigate();
