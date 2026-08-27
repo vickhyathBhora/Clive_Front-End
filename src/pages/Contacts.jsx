@@ -13,7 +13,6 @@ import ChatIcon from '@mui/icons-material/Chat';
 import PersonRemoveIcon from '@mui/icons-material/PersonRemove';
 import { useChat } from './ChatContext';
 import './Contacts.css';
-import { initContactsSocketListeners } from './socketListener';
 
 const Contacts = () => {
   // Track active menu state: { id: targetId, anchorEl: HTMLElement }
@@ -24,10 +23,10 @@ const Contacts = () => {
     contacts = [],
     setContacts,
     socket,
-    setActiveChat,
+    
     setSelectedChat,
     reqContacts = [],
-    setReqContacts,
+    
   } = useChat();
 
   const [showRequests, setShowRequests] = useState(false);
@@ -35,24 +34,33 @@ const Contacts = () => {
   // Dynamically compute the active list
   const currentList = showRequests ? reqContacts : contacts;
 
-  // 🎯 Attach socket listeners on mount or socket update
-  useEffect(() => {
-    if (!socket) return;
+const handleSelectContact = (item) => {
+  if (!item) return;
 
-    // Initialize listeners and pass state updater
-    const cleanup = initContactsSocketListeners(socket, setContacts);
+  const contactId = String(item.contact_id || item.id);
 
-    return () => {
-      cleanup();
-    };
-  }, [socket, setContacts]);
+  // 1. Set Selected Chat
+  setSelectedChat(item);
 
-  // 5. Select active chat
-  const handleSelectContact = (item) => {
-    console.log(item);
-    setSelectedChat(item);
-  };
+  // 2. Clear unseen badge in React state UI
+  if (typeof setContacts === 'function') {
+    setContacts((prevContacts) =>
+      (prevContacts || []).map((c) => {
+        const currentCId = String(c.contact_id);
+        if (currentCId === contactId) {
+          return { ...c, unseen: 0 };
+        }
+        return c;
+      })
+    );
+  }
 
+  // 3. Emit socket event to reset unseen in DB
+  if (socket) {
+    socket.emit('update_unseen', { contact_id: contactId });
+    console.log(`⚡ [FRONTEND] Emitted update_unseen for contact_id: ${contactId}`);
+  }
+};
   const handleToggleView = () => {
     setShowRequests((prev) => !prev);
   };
@@ -83,6 +91,7 @@ const Contacts = () => {
             const targetId = contactObj.id || item.contact_id || index;
             const name = contactObj.name || 'Unknown User';
             const email = contactObj.email || '';
+            const unseend = Number(item.unseen);
             const avatar =
               contactObj.avatar_url ||
               'https://api.dicebear.com/7.x/avataaars/svg?seed=default';
@@ -101,6 +110,11 @@ const Contacts = () => {
                     <h4 className="contact-name">{name}</h4>
                     {email && <p className="contact-email">{email}</p>}
                   </div>
+                  {unseend > 0 && (
+          <div className="unseen-badge">
+            {unseend > 99 ? '99+' : unseend}
+          </div>
+        )}
                 </div>
               </div>
             );

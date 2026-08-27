@@ -1,65 +1,98 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useChat } from './ChatContext';
-import { initMessagesSocketListeners } from './socketListener';
+import { Box, TextField, IconButton, InputAdornment } from '@mui/material';
+import SendIcon from '@mui/icons-material/Send';
+import './Messages.css';
 
 export const Messages = () => {
-  const { messages, setMessages, selectedChat, socket, user , isAccepting,setIsAccepting, setIsRejecting,isRejecting} = useChat();
+  const {
+    messages,
+    setMessages,
+    selectedChat,
+    socket,
+    user,
+    isAccepting,
+    setIsAccepting,
+    isRejecting,
+    setIsRejecting,
+  } = useChat();
 
+  const messagesEndRef = useRef(null);
 
-
-const handleAccept = () => {
-  if (isAccepting || isRejecting || !selectedChat?.contact.id) return;
-
-  setIsAccepting(true);
-  socket.emit('accept_invite', { contactId: selectedChat.contact.id });
-};
-
-const handleReject = () => {
-  if (isAccepting || isRejecting || !selectedChat?.contact.id) return;
-
-  setIsRejecting(true);
-  socket.emit('reject_invite', { contactId: selectedChat.contact.id });
-};
-
-
-  // 1. Get current logged-in user ID
-  const storedUser = JSON.parse(localStorage.getItem('user') || '{}');
-  const currentUserId = storedUser?.id || user?.id || socket?.user?.id || socket?.userId;
-
-  // 2. Extract target user details based on your exact object structure
+  // Safely grab contact ID from selectedChat object structure
+  const contactId = selectedChat?.contact_id;
   const targetUserId = selectedChat?.contact?.id;
-  const contactName = selectedChat?.contact?.name || 'User';
+  const contactName = selectedChat?.contact?.name || selectedChat?.name || 'User';
   const chatStatus = selectedChat?.status;
 
-  // 3. Fetch messages when selectedChat changes
-  useEffect(() => {
-    if (!selectedChat || !socket || !targetUserId) return;
+  const [textInput, setTextInput] = useState('');
+  const storedUser = JSON.parse(localStorage.getItem('user') || '{}');
+  const currentUserId = storedUser?.id || user?.id || socket?.user?.id || socket?.userId;
+  const receiverId = selectedChat?.contact?.id;
 
-    console.log('[Chat UI] Selected targetUserId:', targetUserId);
+  // Auto-scroll to bottom whenever messages list updates
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
+  const handleSend = () => {
+    const trimmedText = textInput.trim();
+    if (!trimmedText) return;
+
+    // Emit "sendmessage" event with required payload
+    socket.emit('send_message', {
+      sender_id: currentUserId,
+      receiver_id: receiverId,
+      contact_id: contactId,
+      content: trimmedText,
+    });
+    
+    setTextInput('');
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSend();
+    }
+  };
+
+  const handleAccept = () => {
+    if (isAccepting || isRejecting || !targetUserId) return;
+    setIsAccepting(true);
+    socket.emit('accept_invite', { targetUserId: targetUserId });
+  };
+
+  const handleReject = () => {
+    if (isAccepting || isRejecting || !contactId) return;
+    setIsRejecting(true);
+    socket.emit('reject_invite', { contactId: contactId });
+  };
+
+  // Fetch messages when selectedChat changes
+  useEffect(() => {
+    if (!selectedChat?.contact_id || !socket) return;
+
+    console.log('[Chat UI] Fetching messages for contactId:', selectedChat.contact_id);
     setMessages([]);
 
     if (chatStatus === 'accepted') {
-      // Pass both selectedChat object and targetUserId directly
-      socket.emit('get_messages', { selectedChat, targetUserId });
+      socket.emit('get_messages', { contactId: contactId });
     }
-  }, [selectedChat, targetUserId, chatStatus, socket, setMessages]);
+  }, [contactId, chatStatus, socket, setMessages]);
 
-  // 4. Register socket listener for get_messages_res
-  useEffect(() => {
-    if (!socket) return;
-
-    const cleanup = initMessagesSocketListeners(socket, setMessages);
-    return () => cleanup();
-  }, [socket, setMessages]);
-
-  // 5. Check if chat is selected
+  // Check if chat is selected
   if (!selectedChat) {
     return <div className="no-chat">Select a contact to start messaging</div>;
   }
 
-  // 6. Handle Pending Status
+  // Handle Pending Status
   if (chatStatus === 'pending') {
-    const isSentByMe = String(selectedChat.reqsentby) === String(currentUserId);
+    const isSentByMe = String(selectedChat.initiated_by) === String(currentUserId);
 
     if (isSentByMe) {
       return (
@@ -75,54 +108,91 @@ const handleReject = () => {
         <h3>Connection Request</h3>
         <p><strong>{contactName}</strong> sent you a connection request.</p>
         <div className="action-buttons" style={{ marginTop: '15px', display: 'flex', gap: '10px' }}>
-        <button 
-  style={{ 
-    padding: '8px 16px', 
-    background: isAccepting || isRejecting ? '#86efac' : '#22c55e', 
-    color: '#fff', 
-    border: 'none', 
-    borderRadius: '4px', 
-    cursor: isAccepting || isRejecting ? 'not-allowed' : 'pointer',
-    opacity: isAccepting || isRejecting ? 0.7 : 1
-  }}
-  disabled={isAccepting || isRejecting}
-  onClick={handleAccept}
->
-  {isAccepting ? 'Accepting...' : 'Accept'}
-</button>
+          <button
+            style={{
+              padding: '8px 16px',
+              background: isAccepting || isRejecting ? '#86efac' : '#22c55e',
+              color: '#fff',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: isAccepting || isRejecting ? 'not-allowed' : 'pointer',
+              opacity: isAccepting || isRejecting ? 0.7 : 1,
+            }}
+            disabled={isAccepting || isRejecting}
+            onClick={handleAccept}
+          >
+            {isAccepting ? 'Accepting...' : 'Accept'}
+          </button>
 
-<button 
-  style={{ 
-    padding: '8px 16px', 
-    background: isAccepting || isRejecting ? '#fca5a5' : '#ef4444', 
-    color: '#fff', 
-    border: 'none', 
-    borderRadius: '4px', 
-    cursor: isAccepting || isRejecting ? 'not-allowed' : 'pointer',
-    opacity: isAccepting || isRejecting ? 0.7 : 1
-  }}
-  disabled={isAccepting || isRejecting}
-  onClick={handleReject}
->
-  {isRejecting ? 'Rejecting...' : 'Reject'}
-</button>
+          <button
+            style={{
+              padding: '8px 16px',
+              background: isAccepting || isRejecting ? '#fca5a5' : '#ef4444',
+              color: '#fff',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: isAccepting || isRejecting ? 'not-allowed' : 'pointer',
+              opacity: isAccepting || isRejecting ? 0.7 : 1,
+            }}
+            disabled={isAccepting || isRejecting}
+            onClick={handleReject}
+          >
+            {isRejecting ? 'Rejecting...' : 'Reject'}
+          </button>
         </div>
       </div>
     );
   }
 
-  // 7. Render Chat View (Accepted Status)
+  // Render Chat View (Accepted Status)
+  const messageList = Array.isArray(messages) ? messages : [];
+
   return (
     <div className="messages-container">
-      <h3>Chat with {contactName}</h3>
-      <div className="messages-list">
-        {messages.map((msg, index) => (
-          <div key={msg.id || index} className="message-item">
-            <span className="sender">{msg.sender_id}: </span>
-            <span className="text">{msg.content}</span>
-          </div>
-        ))}
+      <div className="messages-header">
+        <h3>Chat with {contactName}</h3>
       </div>
+
+      <div className="messages-list">
+        {messageList.map((msg, index) => {
+          const isMyMessage = String(msg.sender_id) === String(currentUserId);
+          return (
+            <div
+              key={msg.id || index}
+              className={`message-wrapper ${isMyMessage ? 'sent' : 'received'}`}
+            >
+              <div className="message-bubble">
+                <span className="text">{msg.content}</span>
+              </div>
+            </div>
+          );
+        })}
+        {/* Invisible scroll target element */}
+        <div ref={messagesEndRef} />
+      </div>
+
+      <Box className="chat-input-wrapper">
+        <TextField
+          fullWidth
+          variant="outlined"
+          placeholder="Type a message..."
+          value={textInput}
+          onChange={(e) => setTextInput(e.target.value)}
+          onKeyDown={handleKeyDown}
+          className="chat-input-field"
+          slotProps={{
+            input: {
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton onClick={handleSend} className="chat-send-btn">
+                    <SendIcon />
+                  </IconButton>
+                </InputAdornment>
+              ),
+            },
+          }}
+        />
+      </Box>
     </div>
   );
 };

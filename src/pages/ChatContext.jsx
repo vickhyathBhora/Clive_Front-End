@@ -1,5 +1,7 @@
 // ChatContext.js
-import React, { createContext, useContext, useState, useCallback } from 'react';
+import React, { createContext, useContext, useState, useCallback, useEffect  } from 'react';
+
+import {initContactsSocketListeners,initMessagesSocketListeners,initInviteSocketListeners} from './socketListener'
 
 const ChatContext = createContext(null);
 
@@ -22,11 +24,42 @@ const organizeContacts = (allContacts) => {
   setContacts(remaining);
 };
 
+
+useEffect(() => {
+    if (!socket) return;
+
+    // 1. Contact operation listeners (delete contact, clear chat history)
+    const cleanupContacts = initContactsSocketListeners(socket, setContacts, setMessages);
+
+    // 2. Message operation listeners (fetch/receive messages)
+const cleanupMessages = initMessagesSocketListeners(socket, setMessages, setContacts, selectedChat);
+
+    // 3. Invite operation listeners (send, accept, reject invites)
+    const cleanupInvites = initInviteSocketListeners(
+      socket,
+      setContacts,
+      setReqContacts,
+      setSelectedChat,
+      setIsRejecting,
+      setMessages,
+      setIsAccepting
+    );
+
+    // Cleanup all listeners on unmount or socket change
+    return () => {
+      cleanupContacts();
+      cleanupMessages();
+      cleanupInvites();
+    };
+  }, [socket,selectedChat]);
+
   return (
     <ChatContext.Provider
       value={{
-        isAccepting, setIsAccepting,
-        isRejecting, setIsRejecting,
+        isAccepting,
+         setIsAccepting,
+        isRejecting, 
+        setIsRejecting,
         socket,
         setSocket,
         contacts,
