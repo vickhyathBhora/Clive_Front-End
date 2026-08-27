@@ -1,6 +1,6 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { Portfolio } from './pages/Portfolio.jsx';
+import { Portfolio } from './pages/PortFolio.jsx';
 import { Dashboard } from './pages/Dashboard.jsx';
 
 // Protected Route Component
