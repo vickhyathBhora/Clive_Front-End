@@ -1,4 +1,4 @@
-export const API_BASE_URL = 'http://localhost:5000';
+export const API_BASE_URL = 'https://clive-back-end.onrender.com';
 
 export const GOOGLE_AUTH_URL = `${API_BASE_URL}/api/auth/google-auth`;
 export const SEND_OTP_URL = `${API_BASE_URL}/api/auth/send-otp`;
@@ -7,7 +7,7 @@ export const ADD_CONTACT_URL = `${API_BASE_URL}/api/contacts/add`;
 export const DELETE_CONTACT_URL = '/api/contacts/delete';
 export const USER_SEARCH_URL = (queryText) => 
   `/api/contacts/search?query=${encodeURIComponent(queryText)}`;
-export const SOCKET_URL = 'http://localhost:5000';
+export const SOCKET_URL = 'https://clive-back-end.onrender.com';
 
 export function rearrangeRanks(offlineContacts) {
   const LOCAL_CACHE_KEY = 'chat_contacts_state';
@@ -69,10 +69,6 @@ export function rearrangeRanks(offlineContacts) {
   const slicePayload = finalContacts.filter(
     (item) => Number(item.rank) <= dirty_slice.to_rank
   );
-
-  // 10. CLEANUP: Delete old local cache state as requested
-  localStorage.removeItem(LOCAL_CACHE_KEY);
-  console.log('🗑️ [FRONTEND] Cleared chat_contacts_state from localStorage');
 
   // Return ready-to-emit payload
   return {
