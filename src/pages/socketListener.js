@@ -335,14 +335,19 @@ export const initInviteSocketListeners = (
 ) => {
   if (!socket) return () => { };
 
-  const handleInvite = (response) => {
-    console.log('📩 Invite socket event received:', response);
-    const incomingContact = response?.contact;
-    if (!incomingContact) return;
+const handleInvite = (response) => {
+  console.log('📩 Invite socket event received:', response);
 
-    // Add the incoming pending request to the requests list
-    setReqContacts?.((prev) => [incomingContact, ...(prev || [])]);
-  };
+  if (!response?.success) {
+    console.error('⚠️ Invite failed:', response?.message);
+    return;
+  }
+
+  // Handle contact update if returning user contact info
+  if (response?.contact) {
+    setReqContacts?.((prev) => [response.contact, ...(prev || [])]);
+  }
+};
 
 
 
