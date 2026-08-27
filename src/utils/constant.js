@@ -1,6 +1,6 @@
 // 1. Dynamic Base URL (Uses Netlify env variable first, falls back to live backend)
 export const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || 'https://clive-back-end.onrender.com';
+  import.meta.env.VITE_API_BASE_URL || 'https://clive-back-end.vercel.app';
 
 // 2. Fixed Endpoints (All use API_BASE_URL)
 export const GOOGLE_AUTH_URL = `${API_BASE_URL}/api/auth/google-auth`;
