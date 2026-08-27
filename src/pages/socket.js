@@ -1,17 +1,17 @@
 import { io } from 'socket.io-client';
 import { SOCKET_URL } from '../utils/constant';
 
+
 export const initSocket = (overrideUrl = null) => {
   const token = localStorage.getItem('token');
   const targetUrl = overrideUrl || SOCKET_URL;
-
   console.log(`🔌 Connecting Socket to: ${targetUrl}...`);
 
   const socket = io(targetUrl, {
     auth: { token },
     autoConnect: true,
     transports: ['websocket'],
-    reconnection: false, // Turned off default reconnection so we control server hops explicitly
+    reconnection: true, // Turned off default reconnection so we control server hops explicitly
   });
 
   // Catch Server Redirect Signals (Server 1 -> Server 2 -> Server 3 -> Max)
