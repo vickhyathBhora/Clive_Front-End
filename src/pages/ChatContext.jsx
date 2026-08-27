@@ -1,38 +1,38 @@
 // ChatContext.js
-import React, { createContext, useContext, useState, useCallback, useEffect  } from 'react';
+import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
 
-import {initContactsSocketListeners,initMessagesSocketListeners,initInviteSocketListeners} from './socketListener'
+import { initContactsSocketListeners, initMessagesSocketListeners, initInviteSocketListeners } from './socketListener'
 
 const ChatContext = createContext(null);
 
 export const ChatProvider = ({ children } = {}) => {
   const [socket, setSocket] = useState(null);
-  const [messages,setMessages]=useState([]);
-  const [selectedChat,setSelectedChat]=useState();
+  const [messages, setMessages] = useState([]);
+  const [selectedChat, setSelectedChat] = useState();
   const [isAccepting, setIsAccepting] = useState(false);
-const [isRejecting, setIsRejecting] = useState(false);
+  const [isRejecting, setIsRejecting] = useState(false);
 
-   const [contacts, setContacts] = useState([]);
-const [reqContacts, setReqContacts] = useState([]);
+  const [contacts, setContacts] = useState([]);
+  const [reqContacts, setReqContacts] = useState([]);
 
-// 2. Function to organize contacts based on rank
-const organizeContacts = (allContacts) => {
-  const required = allContacts.filter((contact) => contact.rank === 0);
-  const remaining = allContacts.filter((contact) => contact.rank !== 0);
+  // 2. Function to organize contacts based on rank
+  const organizeContacts = (allContacts) => {
+    const required = allContacts.filter((contact) => contact.rank === 0);
+    const remaining = allContacts.filter((contact) => contact.rank !== 0);
 
-  setReqContacts(required);
-  setContacts(remaining);
-};
+    setReqContacts(required);
+    setContacts(remaining);
+  };
 
 
-useEffect(() => {
+  useEffect(() => {
     if (!socket) return;
 
     // 1. Contact operation listeners (delete contact, clear chat history)
     const cleanupContacts = initContactsSocketListeners(socket, setContacts, setMessages);
 
     // 2. Message operation listeners (fetch/receive messages)
-const cleanupMessages = initMessagesSocketListeners(socket, setMessages, setContacts, selectedChat);
+    const cleanupMessages = initMessagesSocketListeners(socket, setMessages, setContacts, selectedChat);
 
     // 3. Invite operation listeners (send, accept, reject invites)
     const cleanupInvites = initInviteSocketListeners(
@@ -51,20 +51,20 @@ const cleanupMessages = initMessagesSocketListeners(socket, setMessages, setCont
       cleanupMessages();
       cleanupInvites();
     };
-  }, [socket,selectedChat]);
+  }, [socket, selectedChat]);
 
   return (
     <ChatContext.Provider
       value={{
         isAccepting,
-         setIsAccepting,
-        isRejecting, 
+        setIsAccepting,
+        isRejecting,
         setIsRejecting,
         socket,
         setSocket,
         contacts,
         setContacts,
-        reqContacts, 
+        reqContacts,
         setReqContacts,
         messages,
         setMessages,

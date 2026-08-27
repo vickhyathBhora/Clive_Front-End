@@ -4,8 +4,8 @@ import { GoogleOAuthProvider } from '@react-oauth/google';
 import { Portfolio } from './pages/PortFolio.jsx';
 import { Dashboard } from './pages/Dashboard.jsx';
 
-const GOOGLE_CLIENT_ID = 
-  import.meta.env.VITE_GOOGLE_CLIENT_ID || 
+const GOOGLE_CLIENT_ID =
+  import.meta.env.VITE_GOOGLE_CLIENT_ID ||
   process.env.REACT_APP_GOOGLE_CLIENT_ID;
 
 // Protected Route Component

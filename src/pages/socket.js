@@ -23,7 +23,7 @@ export const initSocket = (overrideUrl = null) => {
 
       if (redirectUrl && redirectUrl !== 'SYSTEM_OVERLOAD') {
         console.log(`🔄 Target server is full! Auto-rerouting to next server: ${redirectUrl}`);
-        
+
         socket.disconnect();
         // Re-initialize socket with the new server URL
         initSocket(redirectUrl);

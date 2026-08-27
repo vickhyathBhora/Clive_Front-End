@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { 
-  Box, 
-  Typography, 
-  Button, 
-  Container, 
-  CircularProgress, 
-  Alert, 
-  Paper 
+import {
+  Box,
+  Typography,
+  Button,
+  Container,
+  CircularProgress,
+  Alert,
+  Paper
 } from '@mui/material';
 import { useGoogleLogin } from '@react-oauth/google';
 import { useNavigate } from 'react-router-dom';
@@ -27,7 +27,7 @@ export function Portfolio() {
       try {
         // Pass access_token to backend for server-side verification
         const response = await apiPost(GOOGLE_AUTH_URL, {
-          token: tokenResponse.access_token 
+          token: tokenResponse.access_token
         });
 
         if (response?.token) {

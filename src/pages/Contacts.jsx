@@ -23,10 +23,10 @@ const Contacts = () => {
     contacts = [],
     setContacts,
     socket,
-    
+
     setSelectedChat,
     reqContacts = [],
-    
+
   } = useChat();
 
   const [showRequests, setShowRequests] = useState(false);
@@ -34,33 +34,33 @@ const Contacts = () => {
   // Dynamically compute the active list
   const currentList = showRequests ? reqContacts : contacts;
 
-const handleSelectContact = (item) => {
-  if (!item) return;
+  const handleSelectContact = (item) => {
+    if (!item) return;
 
-  const contactId = String(item.contact_id || item.id);
+    const contactId = String(item.contact_id || item.id);
 
-  // 1. Set Selected Chat
-  setSelectedChat(item);
+    // 1. Set Selected Chat
+    setSelectedChat(item);
 
-  // 2. Clear unseen badge in React state UI
-  if (typeof setContacts === 'function') {
-    setContacts((prevContacts) =>
-      (prevContacts || []).map((c) => {
-        const currentCId = String(c.contact_id);
-        if (currentCId === contactId) {
-          return { ...c, unseen: 0 };
-        }
-        return c;
-      })
-    );
-  }
+    // 2. Clear unseen badge in React state UI
+    if (typeof setContacts === 'function') {
+      setContacts((prevContacts) =>
+        (prevContacts || []).map((c) => {
+          const currentCId = String(c.contact_id);
+          if (currentCId === contactId) {
+            return { ...c, unseen: 0 };
+          }
+          return c;
+        })
+      );
+    }
 
-  // 3. Emit socket event to reset unseen in DB
-  if (socket) {
-    socket.emit('update_unseen', { contact_id: contactId });
-    console.log(`⚡ [FRONTEND] Emitted update_unseen for contact_id: ${contactId}`);
-  }
-};
+    // 3. Emit socket event to reset unseen in DB
+    if (socket) {
+      socket.emit('update_unseen', { contact_id: contactId });
+      console.log(`⚡ [FRONTEND] Emitted update_unseen for contact_id: ${contactId}`);
+    }
+  };
   const handleToggleView = () => {
     setShowRequests((prev) => !prev);
   };
@@ -111,10 +111,10 @@ const handleSelectContact = (item) => {
                     {email && <p className="contact-email">{email}</p>}
                   </div>
                   {unseend > 0 && (
-          <div className="unseen-badge">
-            {unseend > 99 ? '99+' : unseend}
-          </div>
-        )}
+                    <div className="unseen-badge">
+                      {unseend > 99 ? '99+' : unseend}
+                    </div>
+                  )}
                 </div>
               </div>
             );

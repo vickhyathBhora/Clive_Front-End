@@ -14,7 +14,7 @@ import { validateEmail } from '../utils/validation';
 export function TopNav() {
   const user = JSON.parse(localStorage.getItem('user'));
   const searchTimerRef = useRef(null);
-  const { contacts,reqContacts,socket,setSelectedChat} = useChat();
+  const { contacts, reqContacts, socket, setSelectedChat } = useChat();
 
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredContacts, setFilteredContacts] = useState([]);
@@ -56,20 +56,20 @@ export function TopNav() {
       setSearchLevel(0);
       return;
     }
-// 💡 FIX 1: Ensure both are arrays before combining
-const safeContacts = Array.isArray(contacts) ? contacts : [];
-const safeReqContacts = Array.isArray(reqContacts) ? reqContacts : [];
+    // 💡 FIX 1: Ensure both are arrays before combining
+    const safeContacts = Array.isArray(contacts) ? contacts : [];
+    const safeReqContacts = Array.isArray(reqContacts) ? reqContacts : [];
 
-// Combine both arrays so search searches across both
-const allContactsToSearch = [...safeContacts, ...safeReqContacts];
+    // Combine both arrays so search searches across both
+    const allContactsToSearch = [...safeContacts, ...safeReqContacts];
 
-// 💡 FIX 2: Filter across all combined contacts
-const localMatches = allContactsToSearch.filter((item) => {
-  const contactObj = item?.contact || {};
-  const name = (contactObj.name || item.name || '').toLowerCase();
-  const email = (contactObj.email || item.email || '').toLowerCase();
-  return name.includes(trimmed) || email.includes(trimmed);
-});
+    // 💡 FIX 2: Filter across all combined contacts
+    const localMatches = allContactsToSearch.filter((item) => {
+      const contactObj = item?.contact || {};
+      const name = (contactObj.name || item.name || '').toLowerCase();
+      const email = (contactObj.email || item.email || '').toLowerCase();
+      return name.includes(trimmed) || email.includes(trimmed);
+    });
     if (localMatches.length > 0) {
       setFilteredContacts(localMatches);
       setSearchLevel(0);
@@ -114,30 +114,30 @@ const localMatches = allContactsToSearch.filter((item) => {
   };
 
   const handleSendInvite = () => {
-  // 1. Validate the input search query
-  const errorMsg = validateEmail(searchQuery);
+    // 1. Validate the input search query
+    const errorMsg = validateEmail(searchQuery);
 
-  if (errorMsg) {
-    setEmailError(errorMsg);
-    return;
-  }
+    if (errorMsg) {
+      setEmailError(errorMsg);
+      return;
+    }
 
-  // Clear previous errors if validation passes
-  setEmailError('');
+    // Clear previous errors if validation passes
+    setEmailError('');
 
-  if (!socket) {
-    setEmailError('Socket connection unavailable');
-    return;
-  }
+    if (!socket) {
+      setEmailError('Socket connection unavailable');
+      return;
+    }
 
-  console.log('🚀 Emitting send_invite for:', searchQuery);
+    console.log('🚀 Emitting send_invite for:', searchQuery);
 
-  // 2. Emit event with clean email string
-  socket.emit('send_invite_new_user', {
-    targetUserMail: searchQuery,
-    user:user.name
-  });
-};
+    // 2. Emit event with clean email string
+    socket.emit('send_invite_new_user', {
+      targetUserMail: searchQuery,
+      user: user.name
+    });
+  };
 
 
   return (
@@ -219,22 +219,22 @@ const localMatches = allContactsToSearch.filter((item) => {
                   })}
                 </div>
               ) : searchLevel === 2 ? (
-          <div className="invite-wrapper">
-    <div className="dropdown-item invite-action" onClick={handleSendInvite}>
-      <SendIcon sx={{ color: '#a8c7fa', fontSize: 18 }} />
-      <div className="dropdown-info">
-        <span className="dropdown-name">Invite to ChatLive</span>
-        <span className="dropdown-email">Send email invite to {searchQuery}</span>
-      </div>
-    </div>
+                <div className="invite-wrapper">
+                  <div className="dropdown-item invite-action" onClick={handleSendInvite}>
+                    <SendIcon sx={{ color: '#a8c7fa', fontSize: 18 }} />
+                    <div className="dropdown-info">
+                      <span className="dropdown-name">Invite to ChatLive</span>
+                      <span className="dropdown-email">Send email invite to {searchQuery}</span>
+                    </div>
+                  </div>
 
-    {/* Display inline validation error if email format is invalid */}
-    {emailError && (
-      <div className="invite-error-msg" style={{ color: '#ffb4ab', fontSize: '12px', padding: '4px 12px' }}>
-        {emailError}
-      </div>
-    )}
-  </div>
+                  {/* Display inline validation error if email format is invalid */}
+                  {emailError && (
+                    <div className="invite-error-msg" style={{ color: '#ffb4ab', fontSize: '12px', padding: '4px 12px' }}>
+                      {emailError}
+                    </div>
+                  )}
+                </div>
               ) : null}
             </div>
           )}

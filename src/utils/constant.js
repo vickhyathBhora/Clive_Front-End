@@ -1,5 +1,5 @@
 // 1. Dynamic Base URL (Uses Netlify env variable first, falls back to live backend)
-export const API_BASE_URL = 
+export const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL || 'https://clive-back-end.onrender.com';
 
 // 2. Fixed Endpoints (All use API_BASE_URL)
@@ -9,7 +9,7 @@ export const GET_ALL_CONTACTS_URL = `${API_BASE_URL}/api/contacts/list`;
 export const ADD_CONTACT_URL = `${API_BASE_URL}/api/contacts/add`;
 export const DELETE_CONTACT_URL = `${API_BASE_URL}/api/contacts/delete`;
 
-export const USER_SEARCH_URL = (queryText) => 
+export const USER_SEARCH_URL = (queryText) =>
   `${API_BASE_URL}/api/contacts/search?query=${encodeURIComponent(queryText)}`;
 
 export const SOCKET_URL = API_BASE_URL;
@@ -48,7 +48,7 @@ export function rearrangeRanks(offlineContacts) {
     .filter((r) => !isNaN(r));
 
   const maxOfflineRank = validRanks.length > 0 ? Math.max(...validRanks) : 0;
-  
+
   if (maxOfflineRank > (dirty_slice.to_rank || 0)) {
     dirty_slice.to_rank = maxOfflineRank;
   }

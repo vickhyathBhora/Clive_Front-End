@@ -5,7 +5,7 @@
  * @param {Function} setMessages - State setter function for active messages
  */
 export const initContactsSocketListeners = (socket, setContacts, setMessages) => {
-  if (!socket) return () => {};
+  if (!socket) return () => { };
 
   // 1. Handle delete contact response -> REMOVE ENTIRELY FROM ARRAY
   const handleContactRes = (response) => {
@@ -55,7 +55,7 @@ export const initContactsSocketListeners = (socket, setContacts, setMessages) =>
  * @param {Function} setMessages - State setter function for messages list
  */
 export const initMessagesSocketListeners = (socket, setMessages, setContacts, selectedChat) => {
-  if (!socket) return () => {};
+  if (!socket) return () => { };
 
   // Handle incoming messages response for selected chat
   const handleGetMessagesRes = (response) => {
@@ -70,258 +70,258 @@ export const initMessagesSocketListeners = (socket, setMessages, setContacts, se
     }
   };
 
- const handleSendMessageRes = (response) => {
-  console.log('📩 [FRONTEND] sendmessageres event triggered');
-  console.log('📩 [FRONTEND] Full raw sendmessageres response:', response);
+  const handleSendMessageRes = (response) => {
+    console.log('📩 [FRONTEND] sendmessageres event triggered');
+    console.log('📩 [FRONTEND] Full raw sendmessageres response:', response);
 
-  if (!response?.success || !response?.data) {
-    console.error('❌ [FRONTEND] Send message failed or response missing data:', response?.message);
-    return;
-  }
-
-  const newMessage = response.data;
-  const targetId = String(newMessage.contact_id);
-  console.log('✅ [FRONTEND] Parsed new sent message:', newMessage);
-  console.log('🎯 [FRONTEND] Target contact ID for sendmessageres:', targetId);
-
-  // 1. Update Messages Array (Push to end, max 10 items)
-  if (setMessages) {
-    console.log('🔄 [FRONTEND] setMessages context function exists. Updating messages array...');
-    setMessages((prevMessages) => {
-      console.log('📦 [FRONTEND] Current prevMessages count:', prevMessages.length);
-      const updated = [...prevMessages, newMessage];
-      if (updated.length > 10) {
-        console.log('✂️ [FRONTEND] Messages array length exceeds 10. Shifting oldest message...');
-        updated.shift(); // Remove oldest message
-      }
-      console.log('✅ [FRONTEND] Updated messages array result:', updated);
-      return updated;
-    });
-  } else {
-    console.warn('⚠️ [FRONTEND] setMessages is undefined inside handleSendMessageRes!');
-  }
-
-  // 2. Update Contacts UI State (If rank > 1)
-  if (setContacts) {
-    console.log('🔄 [FRONTEND] setContacts context function exists. Checking contact rank shift...');
-    setContacts((prevContacts) => {
-      console.log('📋 [FRONTEND] Checking prevContacts list for rank shift...');
-      const targetIndex = prevContacts.findIndex(
-        (c) => String(c.contact_id) === targetId
-      );
-      console.log(`🔍 [FRONTEND] Contact targetIndex in UI state: ${targetIndex}`);
-
-      if (targetIndex > 0) {
-        console.log(`⬆️ [FRONTEND] Target contact is at index ${targetIndex} (Rank > 1). Moving to Rank 1...`);
-        const updatedContacts = [...prevContacts];
-        const [targetContact] = updatedContacts.splice(targetIndex, 1);
-
-        targetContact.rank = 1;
-        updatedContacts.unshift(targetContact);
-
-        for (let i = 1; i <= targetIndex; i++) {
-          updatedContacts[i].rank = Number(updatedContacts[i].rank) + 1;
-        }
-
-        console.log('✅ [FRONTEND] Updated contacts UI array result:', updatedContacts);
-        return updatedContacts;
-      }
-
-      console.log('ℹ️ [FRONTEND] Contact is already at Rank 1 or not found in state array. No UI rank shift needed.');
-      return prevContacts;
-    });
-  } else {
-    console.warn('⚠️ [FRONTEND] setContacts is undefined inside handleSendMessageRes!');
-  }
-
-  // 3. Update Local Storage Cache
-  console.log('💾 [FRONTEND] Reading chat_contacts_state from localStorage...');
-  const cacheRaw = localStorage.getItem('chat_contacts_state');
-  if (cacheRaw) {
-    console.log('📦 [FRONTEND] Raw cache retrieved from localStorage.');
-    const cache = JSON.parse(cacheRaw);
-    const targetMeta = cache.contacts_meta?.find(
-      (item) => String(item.id) === targetId
-    );
-    console.log('🔍 [FRONTEND] Target metadata in cache:', targetMeta);
-
-    if (targetMeta && Number(targetMeta.rank) > 1) {
-      const oldRank = Number(targetMeta.rank);
-      console.log(`⬆️ [FRONTEND] Updating cache metadata ranks. Old rank was ${oldRank}...`);
-
-      cache.contacts_meta.forEach((item) => {
-        const itemRank = Number(item.rank);
-
-        if (String(item.id) === targetId) {
-          item.rank = 1;
-        } else if (itemRank >= 1 && itemRank < oldRank) {
-          item.rank = itemRank + 1;
-        }
-      });
-const existingToRank = Number(cache.dirty_slice?.to_rank || 0);
-      const highestToRank = Math.max(existingToRank, oldRank);
-
-      cache.sync_pending = true;
-      cache.dirty_slice = {
-        from_rank: 1,
-        to_rank: highestToRank,
-      };
-
-      console.log('💾 [FRONTEND] Saving updated cache back to localStorage:', cache);
-      localStorage.setItem('chat_contacts_state', JSON.stringify(cache));
-    } else {
-      console.log('ℹ️ [FRONTEND] Cache targetMeta null or rank is already 1. Skipping cache shift.');
+    if (!response?.success || !response?.data) {
+      console.error('❌ [FRONTEND] Send message failed or response missing data:', response?.message);
+      return;
     }
-  } else {
-    console.log('ℹ️ [FRONTEND] No chat_contacts_state found in localStorage.');
-  }
-};
 
-const handleNewMessage = (response) => {
-  console.log('📩 [FRONTEND] new_message event triggered');
-  console.log('📩 [FRONTEND] Full raw new_message response:', response);
+    const newMessage = response.data;
+    const targetId = String(newMessage.contact_id);
+    console.log('✅ [FRONTEND] Parsed new sent message:', newMessage);
+    console.log('🎯 [FRONTEND] Target contact ID for sendmessageres:', targetId);
 
-  if (!response?.success || !response?.data) {
-    console.warn('⚠️ [FRONTEND] Invalid or unsuccessful new_message payload structure:', response);
-    return;
-  }
+    // 1. Update Messages Array (Push to end, max 10 items)
+    if (setMessages) {
+      console.log('🔄 [FRONTEND] setMessages context function exists. Updating messages array...');
+      setMessages((prevMessages) => {
+        console.log('📦 [FRONTEND] Current prevMessages count:', prevMessages.length);
+        const updated = [...prevMessages, newMessage];
+        if (updated.length > 10) {
+          console.log('✂️ [FRONTEND] Messages array length exceeds 10. Shifting oldest message...');
+          updated.shift(); // Remove oldest message
+        }
+        console.log('✅ [FRONTEND] Updated messages array result:', updated);
+        return updated;
+      });
+    } else {
+      console.warn('⚠️ [FRONTEND] setMessages is undefined inside handleSendMessageRes!');
+    }
 
-  const newMessage = response.data;
-  const targetId = String(newMessage.contact_id);
-  console.log('✅ [FRONTEND] Parsed incoming new_message:', newMessage);
-  console.log('🎯 [FRONTEND] Target contact ID for new_message:', targetId);
-  console.log('💬 [FRONTEND] Current selectedChat state object:', selectedChat);
-
-  // Direct state evaluation (No .current)
-  const isActiveChat =
-    selectedChat &&
-    String(selectedChat.contact_id) === targetId;
-
-  console.log(`💬 [FRONTEND] Is incoming message for active visible chat? ${isActiveChat}`);
-
-  // 1. Web Push Notification (Only for background chats)
-  if (!isActiveChat && 'Notification' in window && Notification.permission === 'granted') {
-    console.log('🔔 [FRONTEND] Chat is in background. Triggering browser desktop Notification...');
-    new Notification(`New message from ${newMessage.sender_name || 'Contact'}`, {
-      body: newMessage.content,
-      icon: newMessage.sender_avatar || '/default-avatar.png',
-    });
-  } else if (!isActiveChat) {
-    console.log('ℹ️ [FRONTEND] Background chat notification skipped (Notifications API not permitted or unsupported).');
-  }
-
-  // 2. Append to Active Messages State (Max 10)
-  if (isActiveChat && setMessages) {
-    console.log('➕ [FRONTEND] Appending incoming message to active chat message state...');
-    setMessages((prevMessages) => {
-      console.log('📦 [FRONTEND] Current prevMessages count:', prevMessages.length);
-      const updated = [...prevMessages, newMessage];
-      if (updated.length > 10) {
-        console.log('✂️ [FRONTEND] Active messages length > 10. Trimming oldest...');
-        updated.shift();
-      }
-      console.log('✅ [FRONTEND] Updated active messages array:', updated);
-      return updated;
-    });
-  } else if (isActiveChat && !setMessages) {
-    console.warn('⚠️ [FRONTEND] Chat is active but setMessages function is missing!');
-  }
-
-  // 3. ONLY execute state & cache shift logic if message belongs to a BACKGROUND chat!
-  if (!isActiveChat) {
-    console.log('⚙️ [FRONTEND] Processing background chat shift & unseen count update...');
-    
+    // 2. Update Contacts UI State (If rank > 1)
     if (setContacts) {
-      console.log('🔄 [FRONTEND] Updating contacts state for background message...');
+      console.log('🔄 [FRONTEND] setContacts context function exists. Checking contact rank shift...');
       setContacts((prevContacts) => {
+        console.log('📋 [FRONTEND] Checking prevContacts list for rank shift...');
         const targetIndex = prevContacts.findIndex(
-          (c) => String(c.contact_id || c.id) === targetId
+          (c) => String(c.contact_id) === targetId
         );
-        console.log(`🔍 [FRONTEND] Background contact targetIndex: ${targetIndex}`);
+        console.log(`🔍 [FRONTEND] Contact targetIndex in UI state: ${targetIndex}`);
 
-        if (targetIndex === -1) {
-          console.warn('⚠️ [FRONTEND] Incoming message contact not found in current prevContacts state array.');
-          return prevContacts;
+        if (targetIndex > 0) {
+          console.log(`⬆️ [FRONTEND] Target contact is at index ${targetIndex} (Rank > 1). Moving to Rank 1...`);
+          const updatedContacts = [...prevContacts];
+          const [targetContact] = updatedContacts.splice(targetIndex, 1);
+
+          targetContact.rank = 1;
+          updatedContacts.unshift(targetContact);
+
+          for (let i = 1; i <= targetIndex; i++) {
+            updatedContacts[i].rank = Number(updatedContacts[i].rank) + 1;
+          }
+
+          console.log('✅ [FRONTEND] Updated contacts UI array result:', updatedContacts);
+          return updatedContacts;
         }
 
-        const updatedContacts = [...prevContacts];
-        const [targetContact] = updatedContacts.splice(targetIndex, 1);
-
-        targetContact.unseen = Number(targetContact.unseen || 0) + 1;
-        targetContact.rank = 1;
-        updatedContacts.unshift(targetContact);
-
-        for (let i = 1; i <= targetIndex; i++) {
-          updatedContacts[i].rank = Number(updatedContacts[i].rank) + 1;
-        }
-
-        console.log('✅ [FRONTEND] Updated background contacts array result:', updatedContacts);
-        return updatedContacts;
+        console.log('ℹ️ [FRONTEND] Contact is already at Rank 1 or not found in state array. No UI rank shift needed.');
+        return prevContacts;
       });
     } else {
-      console.warn('⚠️ [FRONTEND] setContacts is undefined inside background handleNewMessage!');
+      console.warn('⚠️ [FRONTEND] setContacts is undefined inside handleSendMessageRes!');
     }
 
-    // 4. Update Local Storage Cache
-    console.log('💾 [FRONTEND] Reading chat_contacts_state for background message cache update...');
+    // 3. Update Local Storage Cache
+    console.log('💾 [FRONTEND] Reading chat_contacts_state from localStorage...');
     const cacheRaw = localStorage.getItem('chat_contacts_state');
     if (cacheRaw) {
-      console.log('📦 [FRONTEND] Raw cache retrieved for background update.');
+      console.log('📦 [FRONTEND] Raw cache retrieved from localStorage.');
       const cache = JSON.parse(cacheRaw);
       const targetMeta = cache.contacts_meta?.find(
         (item) => String(item.id) === targetId
       );
-      console.log('🔍 [FRONTEND] Target metadata in background cache:', targetMeta);
+      console.log('🔍 [FRONTEND] Target metadata in cache:', targetMeta);
 
-      if (targetMeta) {
+      if (targetMeta && Number(targetMeta.rank) > 1) {
         const oldRank = Number(targetMeta.rank);
-  
-        if (oldRank > 1) {
-          console.log('🔄 [FRONTEND] Re-ranking cache items for background contact...');
-          cache.contacts_meta.forEach((item) => {
-            const itemRank = Number(item.rank);
+        console.log(`⬆️ [FRONTEND] Updating cache metadata ranks. Old rank was ${oldRank}...`);
 
-            if (String(item.id) === targetId) {
-              item.rank = 1;
-            } else if (itemRank >= 1 && itemRank < oldRank) {
-              item.rank = itemRank + 1;
-            }
-          });
+        cache.contacts_meta.forEach((item) => {
+          const itemRank = Number(item.rank);
 
-          const existingToRank = cache.dirty_slice?.to_rank || 0;
-          const highestToRank = Math.max(existingToRank, oldRank);
+          if (String(item.id) === targetId) {
+            item.rank = 1;
+          } else if (itemRank >= 1 && itemRank < oldRank) {
+            item.rank = itemRank + 1;
+          }
+        });
+        const existingToRank = Number(cache.dirty_slice?.to_rank || 0);
+        const highestToRank = Math.max(existingToRank, oldRank);
 
-          cache.sync_pending = true;
-          cache.dirty_slice = {
-            from_rank: 1,
-            to_rank: highestToRank,
-          };
-        }
+        cache.sync_pending = true;
+        cache.dirty_slice = {
+          from_rank: 1,
+          to_rank: highestToRank,
+        };
 
-        console.log('💾 [FRONTEND] Saving background updated cache to localStorage:', cache);
+        console.log('💾 [FRONTEND] Saving updated cache back to localStorage:', cache);
         localStorage.setItem('chat_contacts_state', JSON.stringify(cache));
       } else {
-        console.log('ℹ️ [FRONTEND] Background targetMeta not found in cache.');
+        console.log('ℹ️ [FRONTEND] Cache targetMeta null or rank is already 1. Skipping cache shift.');
       }
     } else {
-      console.log('ℹ️ [FRONTEND] No chat_contacts_state in localStorage during background handleNewMessage.');
+      console.log('ℹ️ [FRONTEND] No chat_contacts_state found in localStorage.');
     }
-  } else {
-    console.log('ℹ️ [FRONTEND] Skipping background contacts re-order because incoming message belongs to ACTIVE chat.');
-  }
-};
-  // Register listeners
- // Register listeners
-socket.on('get_messages_res', handleGetMessagesRes);
-socket.on('send_message_res', handleSendMessageRes);
-socket.on('new_message', handleNewMessage);
+  };
 
-// Cleanup function
-return () => {
-  socket.off('get_messages_res', handleGetMessagesRes);
-  socket.off('send_message_res', handleSendMessageRes);
-  socket.off('new_message', handleNewMessage);
-};
+  const handleNewMessage = (response) => {
+    console.log('📩 [FRONTEND] new_message event triggered');
+    console.log('📩 [FRONTEND] Full raw new_message response:', response);
+
+    if (!response?.success || !response?.data) {
+      console.warn('⚠️ [FRONTEND] Invalid or unsuccessful new_message payload structure:', response);
+      return;
+    }
+
+    const newMessage = response.data;
+    const targetId = String(newMessage.contact_id);
+    console.log('✅ [FRONTEND] Parsed incoming new_message:', newMessage);
+    console.log('🎯 [FRONTEND] Target contact ID for new_message:', targetId);
+    console.log('💬 [FRONTEND] Current selectedChat state object:', selectedChat);
+
+    // Direct state evaluation (No .current)
+    const isActiveChat =
+      selectedChat &&
+      String(selectedChat.contact_id) === targetId;
+
+    console.log(`💬 [FRONTEND] Is incoming message for active visible chat? ${isActiveChat}`);
+
+    // 1. Web Push Notification (Only for background chats)
+    if (!isActiveChat && 'Notification' in window && Notification.permission === 'granted') {
+      console.log('🔔 [FRONTEND] Chat is in background. Triggering browser desktop Notification...');
+      new Notification(`New message from ${newMessage.sender_name || 'Contact'}`, {
+        body: newMessage.content,
+        icon: newMessage.sender_avatar || '/default-avatar.png',
+      });
+    } else if (!isActiveChat) {
+      console.log('ℹ️ [FRONTEND] Background chat notification skipped (Notifications API not permitted or unsupported).');
+    }
+
+    // 2. Append to Active Messages State (Max 10)
+    if (isActiveChat && setMessages) {
+      console.log('➕ [FRONTEND] Appending incoming message to active chat message state...');
+      setMessages((prevMessages) => {
+        console.log('📦 [FRONTEND] Current prevMessages count:', prevMessages.length);
+        const updated = [...prevMessages, newMessage];
+        if (updated.length > 10) {
+          console.log('✂️ [FRONTEND] Active messages length > 10. Trimming oldest...');
+          updated.shift();
+        }
+        console.log('✅ [FRONTEND] Updated active messages array:', updated);
+        return updated;
+      });
+    } else if (isActiveChat && !setMessages) {
+      console.warn('⚠️ [FRONTEND] Chat is active but setMessages function is missing!');
+    }
+
+    // 3. ONLY execute state & cache shift logic if message belongs to a BACKGROUND chat!
+    if (!isActiveChat) {
+      console.log('⚙️ [FRONTEND] Processing background chat shift & unseen count update...');
+
+      if (setContacts) {
+        console.log('🔄 [FRONTEND] Updating contacts state for background message...');
+        setContacts((prevContacts) => {
+          const targetIndex = prevContacts.findIndex(
+            (c) => String(c.contact_id || c.id) === targetId
+          );
+          console.log(`🔍 [FRONTEND] Background contact targetIndex: ${targetIndex}`);
+
+          if (targetIndex === -1) {
+            console.warn('⚠️ [FRONTEND] Incoming message contact not found in current prevContacts state array.');
+            return prevContacts;
+          }
+
+          const updatedContacts = [...prevContacts];
+          const [targetContact] = updatedContacts.splice(targetIndex, 1);
+
+          targetContact.unseen = Number(targetContact.unseen || 0) + 1;
+          targetContact.rank = 1;
+          updatedContacts.unshift(targetContact);
+
+          for (let i = 1; i <= targetIndex; i++) {
+            updatedContacts[i].rank = Number(updatedContacts[i].rank) + 1;
+          }
+
+          console.log('✅ [FRONTEND] Updated background contacts array result:', updatedContacts);
+          return updatedContacts;
+        });
+      } else {
+        console.warn('⚠️ [FRONTEND] setContacts is undefined inside background handleNewMessage!');
+      }
+
+      // 4. Update Local Storage Cache
+      console.log('💾 [FRONTEND] Reading chat_contacts_state for background message cache update...');
+      const cacheRaw = localStorage.getItem('chat_contacts_state');
+      if (cacheRaw) {
+        console.log('📦 [FRONTEND] Raw cache retrieved for background update.');
+        const cache = JSON.parse(cacheRaw);
+        const targetMeta = cache.contacts_meta?.find(
+          (item) => String(item.id) === targetId
+        );
+        console.log('🔍 [FRONTEND] Target metadata in background cache:', targetMeta);
+
+        if (targetMeta) {
+          const oldRank = Number(targetMeta.rank);
+
+          if (oldRank > 1) {
+            console.log('🔄 [FRONTEND] Re-ranking cache items for background contact...');
+            cache.contacts_meta.forEach((item) => {
+              const itemRank = Number(item.rank);
+
+              if (String(item.id) === targetId) {
+                item.rank = 1;
+              } else if (itemRank >= 1 && itemRank < oldRank) {
+                item.rank = itemRank + 1;
+              }
+            });
+
+            const existingToRank = cache.dirty_slice?.to_rank || 0;
+            const highestToRank = Math.max(existingToRank, oldRank);
+
+            cache.sync_pending = true;
+            cache.dirty_slice = {
+              from_rank: 1,
+              to_rank: highestToRank,
+            };
+          }
+
+          console.log('💾 [FRONTEND] Saving background updated cache to localStorage:', cache);
+          localStorage.setItem('chat_contacts_state', JSON.stringify(cache));
+        } else {
+          console.log('ℹ️ [FRONTEND] Background targetMeta not found in cache.');
+        }
+      } else {
+        console.log('ℹ️ [FRONTEND] No chat_contacts_state in localStorage during background handleNewMessage.');
+      }
+    } else {
+      console.log('ℹ️ [FRONTEND] Skipping background contacts re-order because incoming message belongs to ACTIVE chat.');
+    }
+  };
+  // Register listeners
+  // Register listeners
+  socket.on('get_messages_res', handleGetMessagesRes);
+  socket.on('send_message_res', handleSendMessageRes);
+  socket.on('new_message', handleNewMessage);
+
+  // Cleanup function
+  return () => {
+    socket.off('get_messages_res', handleGetMessagesRes);
+    socket.off('send_message_res', handleSendMessageRes);
+    socket.off('new_message', handleNewMessage);
+  };
 };
 
 export const initInviteSocketListeners = (
@@ -333,392 +333,305 @@ export const initInviteSocketListeners = (
   setMessages,
   setIsAccepting
 ) => {
-  if (!socket) return () => {};
+  if (!socket) return () => { };
 
- const handleInvite = (response) => {
-  console.log('📩 Invite socket event received:', response);
-  const incomingContact = response?.contact;
-  if (!incomingContact) return;
+  const handleInvite = (response) => {
+    console.log('📩 Invite socket event received:', response);
+    const incomingContact = response?.contact;
+    if (!incomingContact) return;
 
-  // Add the incoming pending request to the requests list
-  setReqContacts?.((prev) => [incomingContact, ...(prev || [])]);
-};
+    // Add the incoming pending request to the requests list
+    setReqContacts?.((prev) => [incomingContact, ...(prev || [])]);
+  };
 
 
 
-const handleRejectedYourInvite = (response) => {
-  console.log('❌ Your invite was rejected response received:', response);
+  const handleRejectedYourInvite = (response) => {
+    console.log('❌ Your invite was rejected response received:', response);
 
-  // 1. Show the alert to the user
-  const rejectorName = response?.rejectedByName || 'A user';
-  alert(`${rejectorName} declined your contact invitation.`);
+    // 1. Show the alert to the user
+    const rejectorName = response?.rejectedByName || 'A user';
+    alert(`${rejectorName} declined your contact invitation.`);
 
-  if (typeof setIsRejecting === 'function') {
-    setIsRejecting(false);
-  }
+    if (typeof setIsRejecting === 'function') {
+      setIsRejecting(false);
+    }
 
-  if (response?.success) {
-    const numericId = String(response?.contactId); // The row ID e.g. '4'
+    if (response?.success) {
+      const numericId = String(response?.contactId); // The row ID e.g. '4'
 
-    if (!numericId) return;
+      if (!numericId) return;
 
-    let targetUuid = null;
+      let targetUuid = null;
 
-    // 2. Find target UUID in reqContacts and filter out row ID '4' from UI state
-    if (typeof setReqContacts === 'function') {
-      setReqContacts((prev) => {
-        const list = prev || [];
+      // 2. Find target UUID in reqContacts and filter out row ID '4' from UI state
+      if (typeof setReqContacts === 'function') {
+        setReqContacts((prev) => {
+          const list = prev || [];
 
-        // Find matching item by row ID ('4') to record its contact UUID
-        const matchedItem = list.find((item) => String(item?.id) === numericId);
-        if (matchedItem) {
-          targetUuid = matchedItem?.contact?.id;
+          // Find matching item by row ID ('4') to record its contact UUID
+          const matchedItem = list.find((item) => String(item?.id) === numericId);
+          if (matchedItem) {
+            targetUuid = matchedItem?.contact?.id;
+          }
+
+          // Filter out item by numeric ID '4'
+          return list.filter((item) => String(item?.id) !== numericId);
+        });
+      }
+
+      // 3. Remove from LocalStorage using the recorded UUID
+      const STORAGE_KEY = 'Chat_contacts_state';
+
+      try {
+        const rawMeta = localStorage.getItem(STORAGE_KEY);
+        if (rawMeta && targetUuid) {
+          const parsed = JSON.parse(rawMeta);
+
+          // Modify ONLY contacts_meta (dirty_slice and sync_pending remain untouched)
+          parsed.contacts_meta = (parsed.contacts_meta || []).filter(
+            (item) => String(item.id) !== String(targetUuid)
+          );
+
+          // Write the original object back with its untouched values
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(parsed));
         }
-
-        // Filter out item by numeric ID '4'
-        return list.filter((item) => String(item?.id) !== numericId);
-      });
-    }
-
-    // 3. Remove from LocalStorage using the recorded UUID
-    const STORAGE_KEY = 'Chat_contacts_state';
-
-    try {
-      const rawMeta = localStorage.getItem(STORAGE_KEY);
-      if (rawMeta && targetUuid) {
-        const parsed = JSON.parse(rawMeta);
-
-        // Modify ONLY contacts_meta (dirty_slice and sync_pending remain untouched)
-        parsed.contacts_meta = (parsed.contacts_meta || []).filter(
-          (item) => String(item.id) !== String(targetUuid)
-        );
-
-        // Write the original object back with its untouched values
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(parsed));
+      } catch (err) {
+        console.error('Failed to update Chat_contacts_state in localStorage:', err);
       }
-    } catch (err) {
-      console.error('Failed to update Chat_contacts_state in localStorage:', err);
-    }
 
-    // 4. Clear active chat panel if open
-    if (typeof setSelectedChat === 'function') {
-      setSelectedChat(null);
-    }
-  }
-};
-const handleRejectInviteRes = (response) => {
-  console.log('❌ Reject invite response received:', response);
-
-  if (typeof setIsRejecting === 'function') {
-    setIsRejecting(false);
-  }
-
-  const isSuccess = response?.success || response?.message?.includes('already deleted');
-
-  if (isSuccess) {
-    const numericId = String(response?.contactId); // SQL row ID e.g. '3'
-    if (!numericId) return;
-
-    // STEP 1: Find target UUID & update React state
-    if (typeof setReqContacts === 'function') {
-      setReqContacts((prev) => {
-        if (!Array.isArray(prev)) return [];
-        return prev.filter(
-          (item) => String(item?.id) !== numericId && String(item?.contact_id) !== numericId
-        );
-      });
-    }
-
-    // STEP 2: Instantly clean LocalStorage
-    const STORAGE_KEY = 'chat_contacts_state';
-    console.log("hello");
-
-    try {
-      const rawMeta = localStorage.getItem(STORAGE_KEY);
-      if (rawMeta) {
-        const parsed = JSON.parse(rawMeta);
-
-        // Simple match: filter out item if item.id equals numericId
-        parsed.contacts_meta = (parsed.contacts_meta || []).filter(
-          (item) => String(item?.id) !== numericId
-        );
-
-        // Fixed: Use STORAGE_KEY instead of undefined realKey
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(parsed));
-
-        console.log('✅ LocalStorage updated successfully!');
-        console.log('Numeric ID removed:', numericId);
-        console.log('Updated contacts_meta:', parsed.contacts_meta);
-         const meta = localStorage.getItem(STORAGE_KEY);
-console.log(meta);
+      // 4. Clear active chat panel if open
+      if (typeof setSelectedChat === 'function') {
+        setSelectedChat(null);
       }
-    } catch (err) {
-      console.error('Failed to update Chat_contacts_state in localStorage:', err);
+    }
+  };
+  const handleRejectInviteRes = (response) => {
+    console.log('❌ Reject invite response received:', response);
+
+    if (typeof setIsRejecting === 'function') {
+      setIsRejecting(false);
     }
 
-    if (typeof setSelectedChat === 'function') {
-      setSelectedChat(null);
+    const isSuccess = response?.success || response?.message?.includes('already deleted');
+
+    if (isSuccess) {
+      const numericId = String(response?.contactId); // SQL row ID e.g. '3'
+      if (!numericId) return;
+
+      // STEP 1: Find target UUID & update React state
+      if (typeof setReqContacts === 'function') {
+        setReqContacts((prev) => {
+          if (!Array.isArray(prev)) return [];
+          return prev.filter(
+            (item) => String(item?.id) !== numericId && String(item?.contact_id) !== numericId
+          );
+        });
+      }
+
+      // STEP 2: Instantly clean LocalStorage
+      const STORAGE_KEY = 'chat_contacts_state';
+      console.log("hello");
+
+      try {
+        const rawMeta = localStorage.getItem(STORAGE_KEY);
+        if (rawMeta) {
+          const parsed = JSON.parse(rawMeta);
+
+          // Simple match: filter out item if item.id equals numericId
+          parsed.contacts_meta = (parsed.contacts_meta || []).filter(
+            (item) => String(item?.id) !== numericId
+          );
+
+          // Fixed: Use STORAGE_KEY instead of undefined realKey
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(parsed));
+
+          console.log('✅ LocalStorage updated successfully!');
+          console.log('Numeric ID removed:', numericId);
+          console.log('Updated contacts_meta:', parsed.contacts_meta);
+          const meta = localStorage.getItem(STORAGE_KEY);
+          console.log(meta);
+        }
+      } catch (err) {
+        console.error('Failed to update Chat_contacts_state in localStorage:', err);
+      }
+
+      if (typeof setSelectedChat === 'function') {
+        setSelectedChat(null);
+      }
     }
-  }
-};
+  };
 
   const handleAcceptInviteRes = (response) => {
-  console.log('✅ Accept invite response received:', response);
+    console.log('✅ Accept invite response received:', response);
 
-  if (typeof setIsAccepting === 'function') {
-    setIsAccepting(false);
-  }
+    if (typeof setIsAccepting === 'function') {
+      setIsAccepting(false);
+    }
 
-  if (!response?.success || !response?.contact) return;
+    if (!response?.success || !response?.contact) return;
 
-  const acceptedRow = response.contact;
+    const acceptedRow = response.contact;
 
-  // 1. Target User ID is inside acceptedRow.contact.id
-  const targetUserId = acceptedRow?.contact?.id;
-  if (!targetUserId) return;
+    // 1. Target User ID is inside acceptedRow.contact.id
+    const targetUserId = acceptedRow?.contact?.id;
+    if (!targetUserId) return;
 
-  // 2. Remove from Pending Requests list (reqContacts)
-if (typeof setReqContacts === 'function') {
-  setReqContacts((prev) =>
-    (prev || []).filter((item) => String(item?.contact?.id) !== String(targetUserId))
-  );
-}
+    // 2. Remove from Pending Requests list (reqContacts)
+    if (typeof setReqContacts === 'function') {
+      setReqContacts((prev) =>
+        (prev || []).filter((item) => String(item?.contact?.id) !== String(targetUserId))
+      );
+    }
 
-if (typeof setContacts === 'function' && acceptedRow) {
-  setContacts((prevContacts) => {
-    // 1. Shift existing contacts down by +1 rank
-    const shiftedContacts = (prevContacts || []).map((contact) => ({
-      ...contact,
-      rank: Number(contact.rank || 0) + 1,
-    }));
-    return [acceptedRow, ...shiftedContacts];
-  });
-}
+    if (typeof setContacts === 'function' && acceptedRow) {
+      setContacts((prevContacts) => {
+        // 1. Shift existing contacts down by +1 rank
+        const shiftedContacts = (prevContacts || []).map((contact) => ({
+          ...contact,
+          rank: Number(contact.rank || 0) + 1,
+        }));
+        return [acceptedRow, ...shiftedContacts];
+      });
+    }
 
-  // 3. Update LocalStorage (Chat_contacts_state)
-  const STORAGE_KEY = 'chat_contacts_state';
+    // 3. Update LocalStorage (Chat_contacts_state)
+    const STORAGE_KEY = 'chat_contacts_state';
 
-  try {
-    const rawMeta = localStorage.getItem(STORAGE_KEY);
-    const parsed = rawMeta ? JSON.parse(rawMeta) : { contacts_meta: [] };
+    try {
+      const rawMeta = localStorage.getItem(STORAGE_KEY);
+      const parsed = rawMeta ? JSON.parse(rawMeta) : { contacts_meta: [] };
 
-    // Shift ALL existing contacts by +1 (unconditionally, even if rank was 0)
-const updatedList = (parsed.contacts_meta || []).map((item) => {
-  const isTargetContact = String(item.id) === String(acceptedRow.contact_id);
-  const currentRank = Number(item.rank);
+      // Shift ALL existing contacts by +1 (unconditionally, even if rank was 0)
+      const updatedList = (parsed.contacts_meta || []).map((item) => {
+        const isTargetContact = String(item.id) === String(acceptedRow.contact_id);
+        const currentRank = Number(item.rank);
 
-  // If it's the newly accepted contact OR already has a active rank (> 0), increment by 1
-  if (isTargetContact || currentRank !== 0) {
-    return {
-      ...item,
-      rank: currentRank + 1,
-    };
-  }
+        // If it's the newly accepted contact OR already has a active rank (> 0), increment by 1
+        if (isTargetContact || currentRank !== 0) {
+          return {
+            ...item,
+            rank: currentRank + 1,
+          };
+        }
 
-  // Otherwise keep rank at 0
-  return item;
-});
-const objectToSave = { ...parsed, contacts_meta: updatedList };
-   
-    // 🔴 SAVE THE OBJECT, NOT THE RAW ARRAY
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(objectToSave));
-   console.log('✅ LocalStorage updated successfully!');
-        console.log('Updated contacts_meta:', parsed.contacts_meta);
-         const meta = localStorage.getItem(STORAGE_KEY);
-console.log(meta);
-   
-  } catch (err) {
-    console.error('Failed to update local storage Chat_contacts_state:', err);
-  }
+        // Otherwise keep rank at 0
+        return item;
+      });
+      const objectToSave = { ...parsed, contacts_meta: updatedList };
 
-  // 4. Update Accepted Contacts State in App Context
+      // 🔴 SAVE THE OBJECT, NOT THE RAW ARRAY
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(objectToSave));
+      console.log('✅ LocalStorage updated successfully!');
+      console.log('Updated contacts_meta:', parsed.contacts_meta);
+      const meta = localStorage.getItem(STORAGE_KEY);
+      console.log(meta);
+
+    } catch (err) {
+      console.error('Failed to update local storage Chat_contacts_state:', err);
+    }
+
+    // 4. Update Accepted Contacts State in App Context
 
 
-  // 5. Initialize Messages and Open Active Chat
-  if (typeof setMessages === 'function') {
-    setMessages([]);
-  }
+    // 5. Initialize Messages and Open Active Chat
+    if (typeof setMessages === 'function') {
+      setMessages([]);
+    }
 
-  if (typeof setSelectedChat === 'function') {
-    setSelectedChat();
-  }
-};
-const handleAcceptedYourInvite = (response) => {
-  console.log('🎉 Live event received: Someone accepted your invite!', response);
+    if (typeof setSelectedChat === 'function') {
+      setSelectedChat();
+    }
+  };
+  const handleAcceptedYourInvite = (response) => {
+    console.log('🎉 Live event received: Someone accepted your invite!', response);
 
-  // Extract accepted contact payload
-  const acceptedRow = response?.contact || response;
-  const targetUserId = acceptedRow?.contact?.id;
+    // Extract accepted contact payload
+    const acceptedRow = response?.contact || response;
+    const targetUserId = acceptedRow?.contact?.id;
 
-  if (!targetUserId) {
-    console.warn('⚠️ Received accepted_your_invite event but missing contact ID:', response);
-    return;
-  }
+    if (!targetUserId) {
+      console.warn('⚠️ Received accepted_your_invite event but missing contact ID:', response);
+      return;
+    }
 
-  // 1. Show notification alert/toast
-  const friendName = acceptedRow?.contact?.name || 'A user';
-  alert(`🎉 ${friendName} accepted your contact request!`);
+    // 1. Show notification alert/toast
+    const friendName = acceptedRow?.contact?.name || 'A user';
+    alert(`🎉 ${friendName} accepted your contact request!`);
 
-  // 2. Update Contacts state (Shift existing + prepend new contact at rank 1)
-  if (typeof setContacts === 'function' && acceptedRow) {
-    setContacts((prevContacts) => {
-      const shiftedContacts = (prevContacts || []).map((contact) => ({
-        ...contact,
-        rank: Number(contact.rank || 0) + 1,
-      }));
-      return [acceptedRow , ...shiftedContacts];
-    });
-  }
+    // 2. Update Contacts state (Shift existing + prepend new contact at rank 1)
+    if (typeof setContacts === 'function' && acceptedRow) {
+      setContacts((prevContacts) => {
+        const shiftedContacts = (prevContacts || []).map((contact) => ({
+          ...contact,
+          rank: Number(contact.rank || 0) + 1,
+        }));
+        return [acceptedRow, ...shiftedContacts];
+      });
+    }
 
-  // 3. Update LocalStorage (chat_contacts_state)
-  const STORAGE_KEY = 'chat_contacts_state';
+    // 3. Update LocalStorage (chat_contacts_state)
+    const STORAGE_KEY = 'chat_contacts_state';
 
-  try {
-    const rawMeta = localStorage.getItem(STORAGE_KEY);
-    const parsed = rawMeta ? JSON.parse(rawMeta) : { contacts_meta: [] };
+    try {
+      const rawMeta = localStorage.getItem(STORAGE_KEY);
+      const parsed = rawMeta ? JSON.parse(rawMeta) : { contacts_meta: [] };
 
-    const currentList = Array.isArray(parsed) ? parsed : (parsed.contacts_meta || []);
+      const currentList = Array.isArray(parsed) ? parsed : (parsed.contacts_meta || []);
 
-    const updatedList = currentList.map((item) => {
-      const isTargetContact = String(item.id) === String(targetUserId);
-      const currentRank = Number(item.rank || 0);
+      const updatedList = currentList.map((item) => {
+        const isTargetContact = String(item.id) === String(targetUserId);
+        const currentRank = Number(item.rank || 0);
 
-      // Increment rank if target user OR already actively ranked (> 0)
-      if (isTargetContact || currentRank !== 0) {
-        return {
-          ...item,
-          rank: currentRank + 1,
-        };
-      }
+        // Increment rank if target user OR already actively ranked (> 0)
+        if (isTargetContact || currentRank !== 0) {
+          return {
+            ...item,
+            rank: currentRank + 1,
+          };
+        }
 
-      return item;
-    });
+        return item;
+      });
 
-    const objectToSave = { ...parsed, contacts_meta: updatedList };
+      const objectToSave = { ...parsed, contacts_meta: updatedList };
 
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(objectToSave));
-    console.log('✅ LocalStorage updated successfully on live invite accept!');
-  } catch (err) {
-    console.error('Failed to update local storage chat_contacts_state:', err);
-  }
-};
-const handleSendInviteNewUserRes = (response) => {
-  console.log('✅ New user invite response received:', response);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(objectToSave));
+      console.log('✅ LocalStorage updated successfully on live invite accept!');
+    } catch (err) {
+      console.error('Failed to update local storage chat_contacts_state:', err);
+    }
+  };
+  const handleSendInviteNewUserRes = (response) => {
+    console.log('✅ New user invite response received:', response);
 
-  alert(response?.message || 'Invitation sent successfully!');
-};
+    alert(response?.message || 'Invitation sent successfully!');
+  };
   // Register listeners
- socket.on('send_invite_res', handleInvite);
-socket.on('new_invite_received', handleInvite);
+  socket.on('send_invite_res', handleInvite);
+  socket.on('new_invite_received', handleInvite);
 
-socket.on('accept_invite_res', handleAcceptInviteRes);
-   socket.on('accepted_your_invite', handleAcceptedYourInvite);
+  socket.on('accept_invite_res', handleAcceptInviteRes);
+  socket.on('accepted_your_invite', handleAcceptedYourInvite);
 
-   socket.on('send_invite_new_user_res', handleSendInviteNewUserRes);
+  socket.on('send_invite_new_user_res', handleSendInviteNewUserRes);
 
-socket.on('reject_invite_res', handleRejectInviteRes);
-socket.on('rejected_your_invite', handleRejectedYourInvite);
+  socket.on('reject_invite_res', handleRejectInviteRes);
+  socket.on('rejected_your_invite', handleRejectedYourInvite);
 
-// Unregister listeners on cleanup
-return () => {
-  socket.off('send_invite_res', handleInvite);
-  socket.off('new_invite_received', handleInvite);
+  // Unregister listeners on cleanup
+  return () => {
+    socket.off('send_invite_res', handleInvite);
+    socket.off('new_invite_received', handleInvite);
 
 
-  socket.off('accept_invite_res', handleAcceptInviteRes);
-   socket.off('accepted_your_invite', handleAcceptedYourInvite);
+    socket.off('accept_invite_res', handleAcceptInviteRes);
+    socket.off('accepted_your_invite', handleAcceptedYourInvite);
 
-   socket.off('send_invite_new_user_res', handleSendInviteNewUserRes);
+    socket.off('send_invite_new_user_res', handleSendInviteNewUserRes);
 
-  socket.off('reject_invite_res', handleRejectInviteRes);
-  socket.off('rejected_your_invite', handleRejectedYourInvite); // Fixed from .on to .off
-};
+    socket.off('reject_invite_res', handleRejectInviteRes);
+    socket.off('rejected_your_invite', handleRejectedYourInvite); // Fixed from .on to .off
+  };
 }
 
-/**-- 1. Truncate contacts and dependent messages tables with CASCADE
-TRUNCATE TABLE messages, contacts RESTART IDENTITY CASCADE;
-INSERT INTO contacts (
-  user_low, 
-  user_high, 
-  status, 
-  initiated_by, 
-  user_low_rank, 
-  user_high_rank, 
-  user_low_unseen, 
-  user_high_unseen, 
-  user_low_time, 
-  user_high_time
-) VALUES 
-  ('10101010-1010-1010-1010-101010101010', '65720c53-4582-4d74-9078-6f9ebc07954b', 'pending', '10101010-1010-1010-1010-101010101010', 0, 0, 0, 0, NULL, NULL),
-  ('20202020-2020-2020-2020-202020202020', '65720c53-4582-4d74-9078-6f9ebc07954b', 'pending', '20202020-2020-2020-2020-202020202020', 0, 0, 0, 0, NULL, NULL),
-  ('30303030-3030-3030-3030-303030303030', '65720c53-4582-4d74-9078-6f9ebc07954b', 'pending', '30303030-3030-3030-3030-303030303030', 0, 0, 0, 0, NULL, NULL),
-  ('40404040-4040-4040-4040-404040404040', '65720c53-4582-4d74-9078-6f9ebc07954b', 'pending', '40404040-4040-4040-4040-404040404040', 0, 0, 0, 0, NULL, NULL),
-  ('50505050-5050-5050-5050-505050505050', '65720c53-4582-4d74-9078-6f9ebc07954b', 'pending', '50505050-5050-5050-5050-505050505050', 0, 0, 0, 0, NULL, NULL),
-  ('65720c53-4582-4d74-9078-6f9ebc07954b', 'cccccccc-cccc-cccc-cccc-cccccccccccc', 'pending', 'cccccccc-cccc-cccc-cccc-cccccccccccc', 0, 0, 0, 0, NULL, NULL),
-  ('65720c53-4582-4d74-9078-6f9ebc07954b', 'dddddddd-dddd-dddd-dddd-dddddddddddd', 'pending', 'dddddddd-dddd-dddd-dddd-dddddddddddd', 0, 0, 0, 0, NULL, NULL),
-  ('65720c53-4582-4d74-9078-6f9ebc07954b', 'eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee', 'pending', 'eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee', 0, 0, 0, 0, NULL, NULL),
-  ('65720c53-4582-4d74-9078-6f9ebc07954b', 'ffffffff-ffff-ffff-ffff-ffffffffffff', 'pending', 'ffffffff-ffff-ffff-ffff-ffffffffffff', 0, 0, 0, 0, NULL, NULL),
-  ('22222222-2222-2222-2222-222222222222', '33333333-3333-3333-3333-333333333333', 'pending', '33333333-3333-3333-3333-333333333333', 0, 0, 0, 0, NULL, NULL)
-ON CONFLICT (user_low, user_high) DO UPDATE SET
-  status = EXCLUDED.status,
-  initiated_by = EXCLUDED.initiated_by,
-  user_low_rank = EXCLUDED.user_low_rank,
-  user_high_rank = EXCLUDED.user_high_rank,
-  user_low_unseen = EXCLUDED.user_low_unseen,
-  user_high_unseen = EXCLUDED.user_high_unseen,
-  user_low_time = EXCLUDED.user_low_time,
-  user_high_time = EXCLUDED.user_high_time;
-
-
-  INSERT INTO contacts (
-  user_low, 
-  user_high, 
-  status, 
-  initiated_by, 
-  user_low_rank, 
-  user_high_rank, 
-  user_low_unseen, 
-  user_high_unseen, 
-  user_low_time, 
-  user_high_time
-) VALUES 
-  ('22222222-2222-2222-2222-222222222222', '65720c53-4582-4d74-9078-6f9ebc07954b', 'accepted', '65720c53-4582-4d74-9078-6f9ebc07954b', 1, 1, 0, 0, NULL, NULL),
-  ('33333333-3333-3333-3333-333333333333', '65720c53-4582-4d74-9078-6f9ebc07954b', 'accepted', '33333333-3333-3333-3333-333333333333', 2, 2, 0, 0, NULL, NULL),
-  ('44444444-4444-4444-4444-444444444444', '65720c53-4582-4d74-9078-6f9ebc07954b', 'accepted', '44444444-4444-4444-4444-444444444444', 3, 3, 0, 0, NULL, NULL),
-  ('55555555-5555-5555-5555-555555555555', '65720c53-4582-4d74-9078-6f9ebc07954b', 'accepted', '65720c53-4582-4d74-9078-6f9ebc07954b', 4, 4, 0, 0, NULL, NULL),
-  ('65720c53-4582-4d74-9078-6f9ebc07954b', '66666666-6666-6666-6666-666666666666', 'accepted', '65720c53-4582-4d74-9078-6f9ebc07954b', 5, 5, 0, 0, NULL, NULL),
-  ('65720c53-4582-4d74-9078-6f9ebc07954b', '77777777-7777-7777-7777-777777777777', 'accepted', '77777777-7777-7777-7777-777777777777', 6, 6, 0, 0, NULL, NULL),
-  ('65720c53-4582-4d74-9078-6f9ebc07954b', '88888888-8888-8888-8888-888888888888', 'accepted', '88888888-8888-8888-8888-888888888888', 7, 7, 0, 0, NULL, NULL),
-  ('65720c53-4582-4d74-9078-6f9ebc07954b', '99999999-9999-9999-9999-999999999999', 'accepted', '65720c53-4582-4d74-9078-6f9ebc07954b', 8, 8, 0, 0, NULL, NULL),
-  ('65720c53-4582-4d74-9078-6f9ebc07954b', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'accepted', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 9, 9, 0, 0, NULL, NULL),
-  ('65720c53-4582-4d74-9078-6f9ebc07954b', 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 'accepted', '65720c53-4582-4d74-9078-6f9ebc07954b', 10, 10, 0, 0, NULL, NULL)
-ON CONFLICT (user_low, user_high) DO UPDATE SET
-  status = EXCLUDED.status,
-  initiated_by = EXCLUDED.initiated_by,
-  user_low_rank = EXCLUDED.user_low_rank,
-  user_high_rank = EXCLUDED.user_high_rank,
-  user_low_unseen = EXCLUDED.user_low_unseen,
-  user_high_unseen = EXCLUDED.user_high_unseen,
-  user_low_time = EXCLUDED.user_low_time,
-  user_high_time = EXCLUDED.user_high_time; */
-
-
-  /*SELECT
-clive_db-#   CASE
-clive_db-#     WHEN user_low = '65720c53-4582-4d74-9078-6f9ebc07954b' THEN user_high
-clive_db-#     ELSE user_low
-clive_db-#   END AS contact_id,
-clive_db-#   u.name AS contact_name,
-clive_db-#   CASE
-clive_db-#     WHEN user_low = '65720c53-4582-4d74-9078-6f9ebc07954b' THEN user_low_rank
-clive_db-#     ELSE user_high_rank
-clive_db-#   END AS my_rank
-clive_db-# FROM contacts c
-clive_db-# JOIN users u ON u.id = (
-clive_db(#   CASE
-clive_db(#     WHEN c.user_low = '65720c53-4582-4d74-9078-6f9ebc07954b' THEN c.user_high
-clive_db(#     ELSE c.user_low
-clive_db(#   END
-clive_db(# )
-clive_db-# WHERE '65720c53-4582-4d74-9078-6f9ebc07954b' IN (user_low, user_high)
-clive_db-# ORDER BY my_rank ASC; */

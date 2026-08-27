@@ -50,7 +50,7 @@ export const Messages = () => {
       contact_id: contactId,
       content: trimmedText,
     });
-    
+
     setTextInput('');
   };
 

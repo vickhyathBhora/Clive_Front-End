@@ -155,3 +155,94 @@ export default ContactMenu;
                     </MenuItem>
                   </Menu>
                 </div>
+
+
+
+
+                /**-- 1. Truncate contacts and dependent messages tables with CASCADE
+TRUNCATE TABLE messages, contacts RESTART IDENTITY CASCADE;
+INSERT INTO contacts (
+  user_low, 
+  user_high, 
+  status, 
+  initiated_by, 
+  user_low_rank, 
+  user_high_rank, 
+  user_low_unseen, 
+  user_high_unseen, 
+  user_low_time, 
+  user_high_time
+) VALUES 
+  ('10101010-1010-1010-1010-101010101010', '65720c53-4582-4d74-9078-6f9ebc07954b', 'pending', '10101010-1010-1010-1010-101010101010', 0, 0, 0, 0, NULL, NULL),
+  ('20202020-2020-2020-2020-202020202020', '65720c53-4582-4d74-9078-6f9ebc07954b', 'pending', '20202020-2020-2020-2020-202020202020', 0, 0, 0, 0, NULL, NULL),
+  ('30303030-3030-3030-3030-303030303030', '65720c53-4582-4d74-9078-6f9ebc07954b', 'pending', '30303030-3030-3030-3030-303030303030', 0, 0, 0, 0, NULL, NULL),
+  ('40404040-4040-4040-4040-404040404040', '65720c53-4582-4d74-9078-6f9ebc07954b', 'pending', '40404040-4040-4040-4040-404040404040', 0, 0, 0, 0, NULL, NULL),
+  ('50505050-5050-5050-5050-505050505050', '65720c53-4582-4d74-9078-6f9ebc07954b', 'pending', '50505050-5050-5050-5050-505050505050', 0, 0, 0, 0, NULL, NULL),
+  ('65720c53-4582-4d74-9078-6f9ebc07954b', 'cccccccc-cccc-cccc-cccc-cccccccccccc', 'pending', 'cccccccc-cccc-cccc-cccc-cccccccccccc', 0, 0, 0, 0, NULL, NULL),
+  ('65720c53-4582-4d74-9078-6f9ebc07954b', 'dddddddd-dddd-dddd-dddd-dddddddddddd', 'pending', 'dddddddd-dddd-dddd-dddd-dddddddddddd', 0, 0, 0, 0, NULL, NULL),
+  ('65720c53-4582-4d74-9078-6f9ebc07954b', 'eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee', 'pending', 'eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee', 0, 0, 0, 0, NULL, NULL),
+  ('65720c53-4582-4d74-9078-6f9ebc07954b', 'ffffffff-ffff-ffff-ffff-ffffffffffff', 'pending', 'ffffffff-ffff-ffff-ffff-ffffffffffff', 0, 0, 0, 0, NULL, NULL),
+  ('22222222-2222-2222-2222-222222222222', '33333333-3333-3333-3333-333333333333', 'pending', '33333333-3333-3333-3333-333333333333', 0, 0, 0, 0, NULL, NULL)
+ON CONFLICT (user_low, user_high) DO UPDATE SET
+  status = EXCLUDED.status,
+  initiated_by = EXCLUDED.initiated_by,
+  user_low_rank = EXCLUDED.user_low_rank,
+  user_high_rank = EXCLUDED.user_high_rank,
+  user_low_unseen = EXCLUDED.user_low_unseen,
+  user_high_unseen = EXCLUDED.user_high_unseen,
+  user_low_time = EXCLUDED.user_low_time,
+  user_high_time = EXCLUDED.user_high_time;
+
+
+  INSERT INTO contacts (
+  user_low, 
+  user_high, 
+  status, 
+  initiated_by, 
+  user_low_rank, 
+  user_high_rank, 
+  user_low_unseen, 
+  user_high_unseen, 
+  user_low_time, 
+  user_high_time
+) VALUES 
+  ('22222222-2222-2222-2222-222222222222', '65720c53-4582-4d74-9078-6f9ebc07954b', 'accepted', '65720c53-4582-4d74-9078-6f9ebc07954b', 1, 1, 0, 0, NULL, NULL),
+  ('33333333-3333-3333-3333-333333333333', '65720c53-4582-4d74-9078-6f9ebc07954b', 'accepted', '33333333-3333-3333-3333-333333333333', 2, 2, 0, 0, NULL, NULL),
+  ('44444444-4444-4444-4444-444444444444', '65720c53-4582-4d74-9078-6f9ebc07954b', 'accepted', '44444444-4444-4444-4444-444444444444', 3, 3, 0, 0, NULL, NULL),
+  ('55555555-5555-5555-5555-555555555555', '65720c53-4582-4d74-9078-6f9ebc07954b', 'accepted', '65720c53-4582-4d74-9078-6f9ebc07954b', 4, 4, 0, 0, NULL, NULL),
+  ('65720c53-4582-4d74-9078-6f9ebc07954b', '66666666-6666-6666-6666-666666666666', 'accepted', '65720c53-4582-4d74-9078-6f9ebc07954b', 5, 5, 0, 0, NULL, NULL),
+  ('65720c53-4582-4d74-9078-6f9ebc07954b', '77777777-7777-7777-7777-777777777777', 'accepted', '77777777-7777-7777-7777-777777777777', 6, 6, 0, 0, NULL, NULL),
+  ('65720c53-4582-4d74-9078-6f9ebc07954b', '88888888-8888-8888-8888-888888888888', 'accepted', '88888888-8888-8888-8888-888888888888', 7, 7, 0, 0, NULL, NULL),
+  ('65720c53-4582-4d74-9078-6f9ebc07954b', '99999999-9999-9999-9999-999999999999', 'accepted', '65720c53-4582-4d74-9078-6f9ebc07954b', 8, 8, 0, 0, NULL, NULL),
+  ('65720c53-4582-4d74-9078-6f9ebc07954b', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'accepted', 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 9, 9, 0, 0, NULL, NULL),
+  ('65720c53-4582-4d74-9078-6f9ebc07954b', 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 'accepted', '65720c53-4582-4d74-9078-6f9ebc07954b', 10, 10, 0, 0, NULL, NULL)
+ON CONFLICT (user_low, user_high) DO UPDATE SET
+  status = EXCLUDED.status,
+  initiated_by = EXCLUDED.initiated_by,
+  user_low_rank = EXCLUDED.user_low_rank,
+  user_high_rank = EXCLUDED.user_high_rank,
+  user_low_unseen = EXCLUDED.user_low_unseen,
+  user_high_unseen = EXCLUDED.user_high_unseen,
+  user_low_time = EXCLUDED.user_low_time,
+  user_high_time = EXCLUDED.user_high_time; */
+
+
+/*SELECT
+clive_db-#   CASE
+clive_db-#     WHEN user_low = '65720c53-4582-4d74-9078-6f9ebc07954b' THEN user_high
+clive_db-#     ELSE user_low
+clive_db-#   END AS contact_id,
+clive_db-#   u.name AS contact_name,
+clive_db-#   CASE
+clive_db-#     WHEN user_low = '65720c53-4582-4d74-9078-6f9ebc07954b' THEN user_low_rank
+clive_db-#     ELSE user_high_rank
+clive_db-#   END AS my_rank
+clive_db-# FROM contacts c
+clive_db-# JOIN users u ON u.id = (
+clive_db(#   CASE
+clive_db(#     WHEN c.user_low = '65720c53-4582-4d74-9078-6f9ebc07954b' THEN c.user_high
+clive_db(#     ELSE c.user_low
+clive_db(#   END
+clive_db(# )
+clive_db-# WHERE '65720c53-4582-4d74-9078-6f9ebc07954b' IN (user_low, user_high)
+clive_db-# ORDER BY my_rank ASC; */
