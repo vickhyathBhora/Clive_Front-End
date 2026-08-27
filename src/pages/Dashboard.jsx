@@ -17,7 +17,7 @@ function DashboardContent() {
       return null;
     }
     try {
-      const response = await fetch('http://localhost:5000/api/contacts/offline_unseen', {
+      const response = await fetch('https://clive-back-end.onrender.com/api/contacts/offline_unseen', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
