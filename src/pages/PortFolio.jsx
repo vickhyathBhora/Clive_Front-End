@@ -12,18 +12,12 @@ import { useGoogleLogin } from '@react-oauth/google';
 import { useNavigate } from 'react-router-dom';
 import { apiPost } from '../utils/api';
 import { GOOGLE_AUTH_URL } from '../utils/constant';
-import './PortFolio.css'; // Importing external CSS file
+import './PortFolio.css';
 
 export function Portfolio() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-
-  // Helper to generate an avatar image from user's initials if Google provides no picture
-  const getInitialsAvatar = (fullName) => {
-    const formattedName = encodeURIComponent(fullName || 'User');
-    return `https://ui-avatars.com/api/?name=${formattedName}&background=random&color=fff`;
-  };
 
   const handleGoogleLogin = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
@@ -31,31 +25,11 @@ export function Portfolio() {
       setError('');
 
       try {
-        // 1. Fetch user profile from Google UserInfo API
-        const googleRes = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
-          headers: { Authorization: `Bearer ${tokenResponse.access_token}` }
-        });
-        const googleUser = await googleRes.json();
-
-        if (!googleUser?.email) {
-          setError('Could not retrieve email from Google account.');
-          setLoading(false);
-          return;
-        }
-
-        // Extract profile data
-        const email = googleUser.email;
-        const name = googleUser.name || `${googleUser.given_name || ''} ${googleUser.family_name || ''}`.trim();
-        const avatarUrl = googleUser.picture || getInitialsAvatar(name || email.split('@')[0]);
-
-        // 2. Authenticate directly with backend (Create or Fetch user)
+        // Pass access_token to backend for server-side verification
         const response = await apiPost(GOOGLE_AUTH_URL, {
-          email,
-          name,
-          avatarUrl
+          token: tokenResponse.access_token 
         });
 
-        // 3. Save auth token and navigate to dashboard
         if (response?.token) {
           localStorage.setItem('token', response.token);
           localStorage.setItem('user', JSON.stringify(response.user));
