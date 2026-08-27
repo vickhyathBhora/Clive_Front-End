@@ -33,6 +33,6 @@ export const initSocket = (overrideUrl = null) => {
       }
     }
   });
-
-  return socket;
+ 
+   return socket;
 };
