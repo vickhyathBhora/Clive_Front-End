@@ -17,7 +17,7 @@ function DashboardContent() {
       return null;
     }
     try {
-      const response = await fetch('https://clive-back-end.vercel.app/api/contacts/offline_unseen', {
+      const response = await fetch('https://cliveback-end-production.up.railway.app/api/contacts/offline_unseen', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
