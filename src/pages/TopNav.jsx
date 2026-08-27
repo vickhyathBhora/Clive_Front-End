@@ -31,7 +31,7 @@ export function TopNav() {
       } else {
         setFilteredContacts([]);
         setSearchLevel(2);
-      }
+           }
     } catch (err) {
       console.error('Server search failed:', err);
       setFilteredContacts([]);
