@@ -113,31 +113,6 @@ export function TopNav() {
     setSearchLevel(0);
   };
 
-  const handleSendInvite = () => {
-    // 1. Validate the input search query
-    const errorMsg = validateEmail(searchQuery);
-
-    if (errorMsg) {
-      setEmailError(errorMsg);
-      return;
-    }
-
-    // Clear previous errors if validation passes
-    setEmailError('');
-
-    if (!socket) {
-      setEmailError('Socket connection unavailable');
-      return;
-    }
-
-    console.log('🚀 Emitting send_invite for:', searchQuery);
-
-    // 2. Emit event with clean email string
-    socket.emit('send_invite_new_user', {
-      targetUserMail: searchQuery,
-      user: user.name
-    });
-  };
 
 
   return (
@@ -219,23 +194,16 @@ export function TopNav() {
                   })}
                 </div>
               ) : searchLevel === 2 ? (
-                <div className="invite-wrapper">
-                  <div className="dropdown-item invite-action" onClick={handleSendInvite}>
-                    <SendIcon sx={{ color: '#a8c7fa', fontSize: 18 }} />
-                    <div className="dropdown-info">
-                      <span className="dropdown-name">Invite to ChatLive</span>
-                      <span className="dropdown-email">Send email invite to {searchQuery}</span>
-                    </div>
-                  </div>
-
-                  {/* Display inline validation error if email format is invalid */}
-                  {emailError && (
-                    <div className="invite-error-msg" style={{ color: '#ffb4ab', fontSize: '12px', padding: '4px 12px' }}>
-                      {emailError}
-                    </div>
-                  )}
-                </div>
-              ) : null}
+  <div className="invite-wrapper">
+    <div className="dropdown-item invite-action" style={{ cursor: 'default' }}>
+      <div className="dropdown-info">
+        <span className="dropdown-name" style={{ color: '#8e918f' }}>
+          No user found
+        </span>
+      </div>
+    </div>
+  </div>
+) : null}
             </div>
           )}
         </div>
