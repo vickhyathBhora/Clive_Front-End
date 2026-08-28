@@ -373,12 +373,9 @@ const handleInvite = (response) => {
       if (typeof setReqContacts === 'function') {
         setReqContacts((prev) => {
           const list = prev || [];
-
-  
-        
-
-          // Filter out item by numeric ID '4'
-          return list.filter((item) => String(item?.id) !== numericId);
+          console.log(list.contact_id);
+          console.log(numericId);
+          return list.filter((item) => String(item?.contact_id) !== numericId);
         });
       }
 
@@ -425,8 +422,10 @@ const handleInvite = (response) => {
       if (typeof setReqContacts === 'function') {
         setReqContacts((prev) => {
           if (!Array.isArray(prev)) return [];
+             console.log(prev.contact_id);
+          console.log(numericId);
           return prev.filter(
-            (item) => String(item?.id) !== numericId 
+            (item) => String(item?.contact_id) !== numericId 
           );
         });
       }
@@ -482,7 +481,7 @@ const handleInvite = (response) => {
     // 2. Remove from Pending Requests list (reqContacts)
     if (typeof setReqContacts === 'function') {
       setReqContacts((prev) =>
-        (prev || []).filter((item) => String(item?.contact?.id) !== String(targetUserId))
+        (prev || []).filter((item) => String(item?.contact.id) !== String(targetUserId))
       );
     }
 
