@@ -17,10 +17,23 @@ export const ChatProvider = ({ children } = {}) => {
 
   // 2. Function to organize contacts based on rank
   const organizeContacts = (allContacts) => {
-    const required = allContacts.filter((contact) => contact.rank === 0);
-    const remaining = allContacts.filter((contact) => contact.rank !== 0);
+    const newReqsCount = allContacts.filter((contact) => Number(contact.rank) === -1).length;
 
-    setReqContacts(required);
+if (newReqsCount > 0) {
+  alert(`You have ${newReqsCount} number of new reqs`);
+}
+const processedContacts = allContacts.map((contact) => ({
+  ...contact,
+  rank: Number(contact.rank) === -1 ? 0 : contact.rank
+}));
+
+const required = processedContacts
+  .filter((contact) => Number(contact.rank) === 0)
+  .sort((a, b) => new Date(b.time) - new Date(a.time));
+
+const remaining = processedContacts.filter((contact) => Number(contact.rank) !== 0);
+
+setReqContacts(required);
     setContacts(remaining);
   };
 

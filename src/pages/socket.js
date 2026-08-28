@@ -16,8 +16,20 @@ export const initSocket = (overrideUrl = null) => {
 
   // Catch Server Redirect Signals (Server 1 -> Server 2 -> Server 3 -> Max)
   socket.on('connect_error', (err) => {
-    console.warn(`⚠️ Socket connection failed on ${targetUrl}:`, err.message);
+  console.warn(`⚠️ Socket connection failed on ${targetUrl}:`, err.message);
 
+  // Check for expired or invalid authentication token
+  if (err.message.includes('Token expired') || err.message.includes('AUTH_ERROR')) {
+    console.warn('🔒 Session expired. Redirecting to Portal...');
+    socket.disconnect();
+    
+    // Optional: Clear invalid stored tokens
+    localStorage.removeItem('token'); 
+    
+    // Redirect to Portal page
+    window.location.href = '/Portfolio';
+    return;
+  }
     if (err.message === 'SERVER_FULL' || err.message === 'SERVER_HIGH_LOAD') {
       const redirectUrl = err.data?.redirectUrl;
 

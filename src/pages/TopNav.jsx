@@ -105,7 +105,7 @@ export function TopNav() {
       setSelectedChat(userItem.contact.id);
     } else if (searchLevel === 1) {
       console.log('Sending connection request to user:', userItem);
-      socket.emit('send_invite', userItem.id, userItem.email);
+      socket.emit('send_invite', userItem.id);
     }
 
     setSearchQuery('');
