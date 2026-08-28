@@ -367,18 +367,15 @@ const handleInvite = (response) => {
 
       if (!numericId) return;
 
-      let targetUuid = null;
+      
 
       // 2. Find target UUID in reqContacts and filter out row ID '4' from UI state
       if (typeof setReqContacts === 'function') {
         setReqContacts((prev) => {
           const list = prev || [];
 
-          // Find matching item by row ID ('4') to record its contact UUID
-          const matchedItem = list.find((item) => String(item?.id) === numericId);
-          if (matchedItem) {
-            targetUuid = matchedItem?.contact?.id;
-          }
+  
+        
 
           // Filter out item by numeric ID '4'
           return list.filter((item) => String(item?.id) !== numericId);
@@ -390,12 +387,12 @@ const handleInvite = (response) => {
 
       try {
         const rawMeta = localStorage.getItem(STORAGE_KEY);
-        if (rawMeta && targetUuid) {
+        if (rawMeta && numericId) {
           const parsed = JSON.parse(rawMeta);
 
           // Modify ONLY contacts_meta (dirty_slice and sync_pending remain untouched)
           parsed.contacts_meta = (parsed.contacts_meta || []).filter(
-            (item) => String(item.id) !== String(targetUuid)
+            (item) => String(item.id) !== String(numericId)
           );
 
           // Write the original object back with its untouched values
@@ -429,7 +426,7 @@ const handleInvite = (response) => {
         setReqContacts((prev) => {
           if (!Array.isArray(prev)) return [];
           return prev.filter(
-            (item) => String(item?.id) !== numericId && String(item?.contact_id) !== numericId
+            (item) => String(item?.id) !== numericId 
           );
         });
       }
