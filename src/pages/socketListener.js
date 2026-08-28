@@ -365,31 +365,34 @@ export const initInviteSocketListeners = (
 
     const contact_id = response.contact_id;
 
+if (typeof setReqContacts === 'function') {
+    setReqContacts((prev = []) => {
+      // 1. Find the matching contact inside the state callback
+      const matchedContact = prev.find((item) => String(item?.id) === String(contact_id));
 
-    let matchedContact = null;
-    // 2. Remove from Pending Requests list (reqContacts)
-    if (typeof setReqContacts === 'function') {
-      setReqContacts((prev = []) => {
-        // 1. Find and store the matching contact data
-        matchedContact = prev.find((item) => String(item?.id) === String(contact_id));
-        // 2. Return the filtered array (removing the matched contact)
-        return prev.filter((item) => String(item?.id) !== String(contact_id));
-      });
-    }
-  if (response.type === "new") {
-        alert(`🎉${matchedContact.contact.name}accepted your contact request!`);
+      if (matchedContact) {
+        // 2. Add to active contacts list
+        if (typeof setContacts === 'function') {
+          setContacts((prevContacts = []) => {
+            const shiftedContacts = (prevContacts || []).map((contact) => ({
+              ...contact,
+              rank: Number(contact.rank || 0) + 1,
+            }));
+            return [matchedContact, ...shiftedContacts];
+          });
+        }
+
+        // 3. Trigger alert safely
+        if (response.type === "new") {
+          const name = matchedContact?.contact?.name || matchedContact?.name || "User";
+          alert(`🎉${name} accepted your contact request!`);
+        }
       }
 
-      if (typeof setContacts === 'function' && matchedContact) {
-        setContacts((prevContacts) => {
-          // 1. Shift existing contacts down by +1 rank
-          const shiftedContacts = (prevContacts || []).map((contact) => ({
-            ...contact,
-            rank: Number(contact.rank || 0) + 1,
-          }));
-          return [matchedContact, ...shiftedContacts];
-        });
-      }
+      // 4. Return the filtered array (removing the matched contact)
+      return prev.filter((item) => String(item?.id) !== String(contact_id));
+    });
+  }
     
       // 3. Update LocalStorage (Chat_contacts_state)
       const STORAGE_KEY = 'chat_contacts_state';
