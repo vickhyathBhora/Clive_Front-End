@@ -59,6 +59,7 @@ export const initMessagesSocketListeners = (socket, setMessages, setContacts, se
 
   // Handle incoming messages response for selected chat
   const handleGetMessagesRes = (response) => {
+    console.log("hello");
     console.log('📩 get_messages_res response:', response);
 
     if (response?.success) {
@@ -335,253 +336,136 @@ export const initInviteSocketListeners = (
 ) => {
   if (!socket) return () => { };
 
-const handleInvite = (response) => {
-  console.log('📩 Invite socket event received:', response);
-  if (!response?.success) {
-    console.error('⚠️ Invite failed:', response?.message);
-    return;
-  }
-if(response.type === "new"){
-alert(`Got New Request From ${response.contact.contact.name}`);
-}
-
-  // Handle contact update if returning user contact info
-  if (response?.contact) {
-    setReqContacts?.((prev) => [response.contact, ...(prev || [])]);
-  }
-};
-
-
-
- /* const handleRejectedYourInvite = (response) => {
-    console.log('❌ Your invite was rejected response received:', response);
-
-    // 1. Show the alert to the user
-    const rejectorName = response?.rejectedByName || 'A user';
-    alert(`${rejectorName} declined your contact invitation.`);
-
-    if (typeof setIsRejecting === 'function') {
-      setIsRejecting(false);
+  const handleInvite = (response) => {
+    console.log('📩 Invite socket event received:', response);
+    if (!response?.success) {
+      console.error('⚠️ Invite failed:', response?.message);
+      return;
+    }
+    if (response.type === "new") {
+      alert(`Got New Request From ${response.contact.contact.name}`);
     }
 
-    if (response?.success) {
-      const numericId = String(response?.contactId); // The row ID e.g. '4'
-
-      if (!numericId) return;
-
-      
-
-      // 2. Find target UUID in reqContacts and filter out row ID '4' from UI state
-      if (typeof setReqContacts === 'function') {
-        setReqContacts((prev) => {
-          const list = prev || [];
-          return list.filter((item) => String(item?.contact_id) !== numericId);
-        });
-      }
-
-      // 3. Remove from LocalStorage using the recorded UUID
-      const STORAGE_KEY = 'Chat_contacts_state';
-
-      try {
-        const rawMeta = localStorage.getItem(STORAGE_KEY);
-        if (rawMeta && numericId) {
-          const parsed = JSON.parse(rawMeta);
-
-          // Modify ONLY contacts_meta (dirty_slice and sync_pending remain untouched)
-          parsed.contacts_meta = (parsed.contacts_meta || []).filter(
-            (item) => String(item.id) !== String(numericId)
-          );
-
-          // Write the original object back with its untouched values
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(parsed));
-        }
-      } catch (err) {
-        console.error('Failed to update Chat_contacts_state in localStorage:', err);
-      }
-
-      // 4. Clear active chat panel if open
-      if (typeof setSelectedChat === 'function') {
-        setSelectedChat(null);
-      }
+    // Handle contact update if returning user contact info
+    if (response?.contact) {
+      setReqContacts?.((prev) => [response.contact, ...(prev || [])]);
     }
   };
-  const handleRejectInviteRes = (response) => {
-    console.log('❌ Reject invite response received:', response);
 
-    if (typeof setIsRejecting === 'function') {
-      setIsRejecting(false);
-    }
 
-    const isSuccess = response?.success || response?.message?.includes('already deleted');
-
-    if (isSuccess) {
-      const numericId = String(response?.contactId); // SQL row ID e.g. '3'
-      if (!numericId) return;
-
-      // STEP 1: Find target UUID & update React state
-      if (typeof setReqContacts === 'function') {
-        setReqContacts((prev) => {
-          if (!Array.isArray(prev)) return [];
-          return prev.filter(
-            (item) => String(item?.contact_id) !== numericId 
-          );
-        });
-      }
-
-      // STEP 2: Instantly clean LocalStorage
-      const STORAGE_KEY = 'chat_contacts_state';
-      console.log("hello");
-
-      try {
-        const rawMeta = localStorage.getItem(STORAGE_KEY);
-        if (rawMeta) {
-          const parsed = JSON.parse(rawMeta);
-
-          // Simple match: filter out item if item.id equals numericId
-          parsed.contacts_meta = (parsed.contacts_meta || []).filter(
-            (item) => String(item?.id) !== numericId
-          );
-
-          // Fixed: Use STORAGE_KEY instead of undefined realKey
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(parsed));
-
-          console.log('✅ LocalStorage updated successfully!');
-          console.log('Numeric ID removed:', numericId);
-          console.log('Updated contacts_meta:', parsed.contacts_meta);
-          const meta = localStorage.getItem(STORAGE_KEY);
-          console.log(meta);
-        }
-      } catch (err) {
-        console.error('Failed to update Chat_contacts_state in localStorage:', err);
-      }
-
-      if (typeof setSelectedChat === 'function') {
-        setSelectedChat(null);
-      }
-    }
-  };
-*/
   const handleAcceptInviteRes = (response) => {
     console.log('✅ Accept invite response received:', response);
 
     if (typeof setIsAccepting === 'function') {
       setIsAccepting(false);
     }
- 
+
 
     if (!response?.success || !response?.contact_id) return;
 
     const contact_id = response.contact_id;
 
- 
- let matchedContact = null;
+
+    let matchedContact = null;
     // 2. Remove from Pending Requests list (reqContacts)
-   if (typeof setReqContacts === 'function') {
-  setReqContacts((prev = []) => {
-    // 1. Find and store the matching contact data
-    matchedContact = prev.find((item) => String(item?.id) === String(contact_id));
-
-    // 2. Return the filtered array (removing the matched contact)
-    return prev.filter((item) => String(item?.id) !== String(contact_id));
-  });
-
-
-    if (typeof setContacts === 'function' && matchedContact) {
-      setContacts((prevContacts) => {
-        // 1. Shift existing contacts down by +1 rank
-        const shiftedContacts = (prevContacts || []).map((contact) => ({
-          ...contact,
-          rank: Number(contact.rank || 0) + 1,
-        }));
-        return [matchedContact, ...shiftedContacts];
+    if (typeof setReqContacts === 'function') {
+      setReqContacts((prev = []) => {
+        // 1. Find and store the matching contact data
+        matchedContact = prev.find((item) => String(item?.id) === String(contact_id));
+        // 2. Return the filtered array (removing the matched contact)
+        return prev.filter((item) => String(item?.id) !== String(contact_id));
       });
-    }
-   if( response.type === "new"){
-alert(`🎉${matchedContact.contact.name}accepted your contact request!`);
-}
-    // 3. Update LocalStorage (Chat_contacts_state)
-    const STORAGE_KEY = 'chat_contacts_state';
-
-    try {
-      const rawMeta = localStorage.getItem(STORAGE_KEY);
-      const parsed = rawMeta ? JSON.parse(rawMeta) : { contacts_meta: [] };
-
-      // Shift ALL existing contacts by +1 (unconditionally, even if rank was 0)
-  const updatedList = (parsed.contacts_meta || []).map((item) => {
-  const isTargetContact = String(item.id) === String(contact_id);
-  const currentRank = Number(item.rank);
-
-  // 1. First shift ALL existing ranked contacts (rank !== 0) by +1
-  if (!isTargetContact && currentRank !== 0) {
-    return {
-      ...item,
-      rank: currentRank + 1
-    };
-  }
-
-  // 2. Then explicitly set the target contact's rank to 1
-  if (isTargetContact) {
-    return {
-      ...item,
-      rank: 1
-    };
-  }
-
-  // 3. Keep rank 0 contacts unchanged
-  return item;
-});
-
-// Save the updated object back to localStorage
-const objectToSave = { ...parsed, contacts_meta: updatedList };
-localStorage.setItem(STORAGE_KEY, JSON.stringify(objectToSave));
-      console.log('✅ LocalStorage updated successfully!');
-      console.log('Updated contacts_meta:', parsed.contacts_meta);
-      const meta = localStorage.getItem(STORAGE_KEY);
-      console.log(meta);
-
-    } catch (err) {
-      console.error('Failed to update local storage Chat_contacts_state:', err);
-    }
-
-    // 4. Update Accepted Contacts State in App Context
 
 
-    // 5. Initialize Messages and Open Active Chat
-    if (typeof setMessages === 'function') {
-      setMessages([]);
-    }
+      if (typeof setContacts === 'function' && matchedContact) {
+        setContacts((prevContacts) => {
+          // 1. Shift existing contacts down by +1 rank
+          const shiftedContacts = (prevContacts || []).map((contact) => ({
+            ...contact,
+            rank: Number(contact.rank || 0) + 1,
+          }));
+          return [matchedContact, ...shiftedContacts];
+        });
+      }
+      if (response.type === "new") {
+        alert(`🎉${matchedContact.contact.name}accepted your contact request!`);
+      }
+      // 3. Update LocalStorage (Chat_contacts_state)
+      const STORAGE_KEY = 'chat_contacts_state';
 
-    if (typeof setSelectedChat === 'function') {
-      setSelectedChat();
+      try {
+        const rawMeta = localStorage.getItem(STORAGE_KEY);
+        const parsed = rawMeta ? JSON.parse(rawMeta) : { contacts_meta: [] };
+
+        // Shift ALL existing contacts by +1 (unconditionally, even if rank was 0)
+        const updatedList = (parsed.contacts_meta || []).map((item) => {
+          const isTargetContact = String(item.id) === String(contact_id);
+          const currentRank = Number(item.rank);
+
+          // 1. First shift ALL existing ranked contacts (rank !== 0) by +1
+          if (!isTargetContact && currentRank !== 0) {
+            return {
+              ...item,
+              rank: currentRank + 1
+            };
+          }
+
+          // 2. Then explicitly set the target contact's rank to 1
+          if (isTargetContact) {
+            return {
+              ...item,
+              rank: 1
+            };
+          }
+
+          // 3. Keep rank 0 contacts unchanged
+          return item;
+        });
+
+        // Save the updated object back to localStorage
+        const objectToSave = { ...parsed, contacts_meta: updatedList };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(objectToSave));
+        console.log('✅ LocalStorage updated successfully!');
+        console.log('Updated contacts_meta:', parsed.contacts_meta);
+        const meta = localStorage.getItem(STORAGE_KEY);
+        console.log(meta);
+
+      } catch (err) {
+        console.error('Failed to update local storage Chat_contacts_state:', err);
+      }
+
+      // 4. Update Accepted Contacts State in App Context
+
+
+      // 5. Initialize Messages and Open Active Chat
+      if (typeof setMessages === 'function') {
+        setMessages([]);
+      }
+
+      if (typeof setSelectedChat === 'function') {
+        setSelectedChat();
+      }
     }
   };
 
-    
-
-  // Register listeners
-  socket.on('send_invite_res', handleInvite);
-  socket.on('new_invite_received', handleInvite);
-
-  socket.on('accept_invite_res', handleAcceptInviteRes);
-  socket.on('accepted_your_invite', handleAcceptInviteRes);
 
 
-  //socket.on('reject_invite_res', handleRejectInviteRes);
-  //socket.on('rejected_your_invite', handleRejectedYourInvite);
+    // Register listeners
+    socket.on('send_invite_res', handleInvite);
+    socket.on('new_invite_received', handleInvite);
 
-  // Unregister listeners on cleanup
-  return () => {
-    socket.off('send_invite_res', handleInvite);
-    socket.off('new_invite_received', handleInvite);
-
-
-    socket.off('accept_invite_res', handleAcceptInviteRes);
-    socket.off('accepted_your_invite', handleAcceptInviteRes);
+    socket.on('accept_invite_res', handleAcceptInviteRes);
+    socket.on('accepted_your_invite', handleAcceptInviteRes);
 
 
-    //socket.off('reject_invite_res', handleRejectInviteRes);
-    //socket.off('rejected_your_invite', handleRejectedYourInvite); // Fixed from .on to .off
-  };
-}
+  
+    return () => {
+      socket.off('send_invite_res', handleInvite);
+      socket.off('new_invite_received', handleInvite);
 
-}
+
+      socket.off('accept_invite_res', handleAcceptInviteRes);
+      socket.off('accepted_your_invite', handleAcceptInviteRes);
+
+    };
+  }
