@@ -8,7 +8,7 @@ import { initSocket } from './socket';
 import { rearrangeRanks } from '../utils/constant';
 
 function DashboardContent() {
-  const { setSocket, organizeContacts,contacts,reqcontacts } = useChat();
+  const { setSocket, organizeContacts,contacts,reqContacts } = useChat();
 
   async function fetchOfflineUnseen() {
     const token = localStorage.getItem('token');
@@ -161,7 +161,7 @@ function DashboardContent() {
   return (
     <div className="dashboard-container">
       {console.log(contacts)}
-      {console.log(reqcontacts)}
+      {console.log(reqContacts)}
       <header className="dashboard-topnav">
         <TopNav />
       </header>
