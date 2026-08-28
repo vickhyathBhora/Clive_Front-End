@@ -576,7 +576,7 @@ localStorage.setItem(STORAGE_KEY, JSON.stringify(objectToSave));
 
 
     socket.off('accept_invite_res', handleAcceptInviteRes);
-    socket.off('accepted_your_invite', handleAcceptedYourInvite);
+    socket.off('accepted_your_invite', handleAcceptInviteRes);
 
 
     //socket.off('reject_invite_res', handleRejectInviteRes);
