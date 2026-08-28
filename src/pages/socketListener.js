@@ -341,6 +341,9 @@ const handleInvite = (response) => {
     console.error('⚠️ Invite failed:', response?.message);
     return;
   }
+if(response.type === "new"){
+alert(`Got New Request From ${response.contact.contact.name}`);
+}
 
   // Handle contact update if returning user contact info
   if (response?.contact) {
@@ -464,33 +467,38 @@ const handleInvite = (response) => {
     if (typeof setIsAccepting === 'function') {
       setIsAccepting(false);
     }
+ 
 
-    if (!response?.success || !response?.contact) return;
+    if (!response?.success || !response?.contact_id) return;
 
-    const acceptedRow = response.contact;
+    const contact_id = response.contact_id;
 
-    // 1. Target User ID is inside acceptedRow.contact.id
-    const targetUserId = acceptedRow?.contact?.id;
-    if (!targetUserId) return;
-
+ 
+ let matchedContact = null;
     // 2. Remove from Pending Requests list (reqContacts)
-    if (typeof setReqContacts === 'function') {
-      setReqContacts((prev) =>
-        (prev || []).filter((item) => String(item?.contact.id) !== String(targetUserId))
-      );
-    }
+   if (typeof setReqContacts === 'function') {
+  setReqContacts((prev = []) => {
+    // 1. Find and store the matching contact data
+    matchedContact = prev.find((item) => String(item?.id) === String(contact_id));
 
-    if (typeof setContacts === 'function' && acceptedRow) {
+    // 2. Return the filtered array (removing the matched contact)
+    return prev.filter((item) => String(item?.id) !== String(contact_id));
+  });
+
+
+    if (typeof setContacts === 'function' && matchedContact) {
       setContacts((prevContacts) => {
         // 1. Shift existing contacts down by +1 rank
         const shiftedContacts = (prevContacts || []).map((contact) => ({
           ...contact,
           rank: Number(contact.rank || 0) + 1,
         }));
-        return [acceptedRow, ...shiftedContacts];
+        return [matchedContact, ...shiftedContacts];
       });
     }
-
+   if( response.type === "new"){
+alert(`🎉${matchedContact.contact.name}accepted your contact request!`);
+}
     // 3. Update LocalStorage (Chat_contacts_state)
     const STORAGE_KEY = 'chat_contacts_state';
 
@@ -499,25 +507,33 @@ const handleInvite = (response) => {
       const parsed = rawMeta ? JSON.parse(rawMeta) : { contacts_meta: [] };
 
       // Shift ALL existing contacts by +1 (unconditionally, even if rank was 0)
-      const updatedList = (parsed.contacts_meta || []).map((item) => {
-        const isTargetContact = String(item.id) === String(acceptedRow.contact_id);
-        const currentRank = Number(item.rank);
+  const updatedList = (parsed.contacts_meta || []).map((item) => {
+  const isTargetContact = String(item.id) === String(contact_id);
+  const currentRank = Number(item.rank);
 
-        // If it's the newly accepted contact OR already has a active rank (> 0), increment by 1
-        if (isTargetContact || currentRank !== 0) {
-          return {
-            ...item,
-            rank: currentRank + 1,
-          };
-        }
+  // 1. First shift ALL existing ranked contacts (rank !== 0) by +1
+  if (!isTargetContact && currentRank !== 0) {
+    return {
+      ...item,
+      rank: currentRank + 1
+    };
+  }
 
-        // Otherwise keep rank at 0
-        return item;
-      });
-      const objectToSave = { ...parsed, contacts_meta: updatedList };
+  // 2. Then explicitly set the target contact's rank to 1
+  if (isTargetContact) {
+    return {
+      ...item,
+      rank: 1
+    };
+  }
 
-      // 🔴 SAVE THE OBJECT, NOT THE RAW ARRAY
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(objectToSave));
+  // 3. Keep rank 0 contacts unchanged
+  return item;
+});
+
+// Save the updated object back to localStorage
+const objectToSave = { ...parsed, contacts_meta: updatedList };
+localStorage.setItem(STORAGE_KEY, JSON.stringify(objectToSave));
       console.log('✅ LocalStorage updated successfully!');
       console.log('Updated contacts_meta:', parsed.contacts_meta);
       const meta = localStorage.getItem(STORAGE_KEY);
@@ -539,72 +555,15 @@ const handleInvite = (response) => {
       setSelectedChat();
     }
   };
-  const handleAcceptedYourInvite = (response) => {
-    console.log('🎉 Live event received: Someone accepted your invite!', response);
 
-    // Extract accepted contact payload
-    const acceptedRow = response?.contact || response;
-    const targetUserId = acceptedRow?.contact?.id;
-
-    if (!targetUserId) {
-      console.warn('⚠️ Received accepted_your_invite event but missing contact ID:', response);
-      return;
-    }
-
-    // 1. Show notification alert/toast
-    const friendName = acceptedRow?.contact?.name || 'A user';
-    alert(`🎉 ${friendName} accepted your contact request!`);
-
-    // 2. Update Contacts state (Shift existing + prepend new contact at rank 1)
-    if (typeof setContacts === 'function' && acceptedRow) {
-      setContacts((prevContacts) => {
-        const shiftedContacts = (prevContacts || []).map((contact) => ({
-          ...contact,
-          rank: Number(contact.rank || 0) + 1,
-        }));
-        return [acceptedRow, ...shiftedContacts];
-      });
-    }
-
-    // 3. Update LocalStorage (chat_contacts_state)
-    const STORAGE_KEY = 'chat_contacts_state';
-
-    try {
-      const rawMeta = localStorage.getItem(STORAGE_KEY);
-      const parsed = rawMeta ? JSON.parse(rawMeta) : { contacts_meta: [] };
-
-      const currentList = Array.isArray(parsed) ? parsed : (parsed.contacts_meta || []);
-
-      const updatedList = currentList.map((item) => {
-        const isTargetContact = String(item.id) === String(targetUserId);
-        const currentRank = Number(item.rank || 0);
-
-        // Increment rank if target user OR already actively ranked (> 0)
-        if (isTargetContact || currentRank !== 0) {
-          return {
-            ...item,
-            rank: currentRank + 1,
-          };
-        }
-
-        return item;
-      });
-
-      const objectToSave = { ...parsed, contacts_meta: updatedList };
-
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(objectToSave));
-      console.log('✅ LocalStorage updated successfully on live invite accept!');
-    } catch (err) {
-      console.error('Failed to update local storage chat_contacts_state:', err);
-    }
-  };
+    
 
   // Register listeners
   socket.on('send_invite_res', handleInvite);
   socket.on('new_invite_received', handleInvite);
 
   socket.on('accept_invite_res', handleAcceptInviteRes);
-  socket.on('accepted_your_invite', handleAcceptedYourInvite);
+  socket.on('accepted_your_invite', handleAcceptInviteRes);
 
 
   //socket.on('reject_invite_res', handleRejectInviteRes);
@@ -625,3 +584,4 @@ const handleInvite = (response) => {
   };
 }
 
+}
