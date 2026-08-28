@@ -15,7 +15,7 @@ export const initContactsSocketListeners = (socket, setContacts, setMessages) =>
       if (setContacts) {
         setContacts((prevContacts) =>
           prevContacts.filter((item) => {
-            const id = item.contact?.id || item.contact_id || item.id;
+            const id = item.contact?.id || item.contact || item.id;
             return String(id) !== String(response.targetId);
           })
         );
@@ -361,14 +361,14 @@ export const initInviteSocketListeners = (
     }
 
 
-    if (!response?.success || !response?.contact_id) return;
+    if (!response?.success || !response?.contact) return;
 
-    const contact_id = response.contact_id;
+    const contact_id = response.contact;
 
 if (typeof setReqContacts === 'function') {
     setReqContacts((prev = []) => {
       // 1. Find the matching contact inside the state callback
-      const matchedContact = prev.find((item) => String(item?.id) === String(contact_id));
+      const matchedContact = prev.find((item) => String(item?.id) === String(contact));
 
       if (matchedContact) {
         // 2. Add to active contacts list
@@ -390,7 +390,7 @@ if (typeof setReqContacts === 'function') {
       }
 
       // 4. Return the filtered array (removing the matched contact)
-      return prev.filter((item) => String(item?.id) !== String(contact_id));
+      return prev.filter((item) => String(item?.id) !== String(contact));
     });
   }
     
@@ -403,7 +403,7 @@ if (typeof setReqContacts === 'function') {
 
         // Shift ALL existing contacts by +1 (unconditionally, even if rank was 0)
         const updatedList = (parsed.contacts_meta || []).map((item) => {
-          const isTargetContact = String(item.id) === String(contact_id);
+          const isTargetContact = String(item.id) === String(contact);
           const currentRank = Number(item.rank);
 
           // 1. First shift ALL existing ranked contacts (rank !== 0) by +1
