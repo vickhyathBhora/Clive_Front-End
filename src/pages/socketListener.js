@@ -345,7 +345,7 @@ const handleInvite = (response) => {
 
   // Handle contact update if returning user contact info
   if (response?.contact) {
-    setReqContacts?.((prev) => [response.contact.data, ...(prev || [])]);
+    setReqContacts?.((prev) => [response.contact, ...(prev || [])]);
   }
 };
 
