@@ -351,7 +351,7 @@ const handleInvite = (response) => {
 
 
 
-  const handleRejectedYourInvite = (response) => {
+ /* const handleRejectedYourInvite = (response) => {
     console.log('❌ Your invite was rejected response received:', response);
 
     // 1. Show the alert to the user
@@ -373,8 +373,6 @@ const handleInvite = (response) => {
       if (typeof setReqContacts === 'function') {
         setReqContacts((prev) => {
           const list = prev || [];
-          console.log(list.contact_id);
-          console.log(numericId);
           return list.filter((item) => String(item?.contact_id) !== numericId);
         });
       }
@@ -422,8 +420,6 @@ const handleInvite = (response) => {
       if (typeof setReqContacts === 'function') {
         setReqContacts((prev) => {
           if (!Array.isArray(prev)) return [];
-             console.log(prev.contact_id);
-          console.log(numericId);
           return prev.filter(
             (item) => String(item?.contact_id) !== numericId 
           );
@@ -462,7 +458,7 @@ const handleInvite = (response) => {
       }
     }
   };
-
+*/
   const handleAcceptInviteRes = (response) => {
     console.log('✅ Accept invite response received:', response);
 
@@ -603,11 +599,7 @@ const handleInvite = (response) => {
       console.error('Failed to update local storage chat_contacts_state:', err);
     }
   };
-  const handleSendInviteNewUserRes = (response) => {
-    console.log('✅ New user invite response received:', response);
 
-    alert(response?.message || 'Invitation sent successfully!');
-  };
   // Register listeners
   socket.on('send_invite_res', handleInvite);
   socket.on('new_invite_received', handleInvite);
@@ -615,10 +607,9 @@ const handleInvite = (response) => {
   socket.on('accept_invite_res', handleAcceptInviteRes);
   socket.on('accepted_your_invite', handleAcceptedYourInvite);
 
-  socket.on('send_invite_new_user_res', handleSendInviteNewUserRes);
 
-  socket.on('reject_invite_res', handleRejectInviteRes);
-  socket.on('rejected_your_invite', handleRejectedYourInvite);
+  //socket.on('reject_invite_res', handleRejectInviteRes);
+  //socket.on('rejected_your_invite', handleRejectedYourInvite);
 
   // Unregister listeners on cleanup
   return () => {
@@ -629,10 +620,9 @@ const handleInvite = (response) => {
     socket.off('accept_invite_res', handleAcceptInviteRes);
     socket.off('accepted_your_invite', handleAcceptedYourInvite);
 
-    socket.off('send_invite_new_user_res', handleSendInviteNewUserRes);
 
-    socket.off('reject_invite_res', handleRejectInviteRes);
-    socket.off('rejected_your_invite', handleRejectedYourInvite); // Fixed from .on to .off
+    //socket.off('reject_invite_res', handleRejectInviteRes);
+    //socket.off('rejected_your_invite', handleRejectedYourInvite); // Fixed from .on to .off
   };
 }
 

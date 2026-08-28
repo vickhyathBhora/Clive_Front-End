@@ -67,11 +67,6 @@ export const Messages = () => {
     socket.emit('accept_invite', { targetUserId: targetUserId });
   };
 
-  const handleReject = () => {
-    if (isAccepting || isRejecting || !contactId) return;
-    setIsRejecting(true);
-    socket.emit('reject_invite', { contactId: contactId });
-  };
 
   // Fetch messages when selectedChat changes
   useEffect(() => {
@@ -124,21 +119,6 @@ export const Messages = () => {
             {isAccepting ? 'Accepting...' : 'Accept'}
           </button>
 
-          <button
-            style={{
-              padding: '8px 16px',
-              background: isAccepting || isRejecting ? '#fca5a5' : '#ef4444',
-              color: '#fff',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: isAccepting || isRejecting ? 'not-allowed' : 'pointer',
-              opacity: isAccepting || isRejecting ? 0.7 : 1,
-            }}
-            disabled={isAccepting || isRejecting}
-            onClick={handleReject}
-          >
-            {isRejecting ? 'Rejecting...' : 'Reject'}
-          </button>
         </div>
       </div>
     );
