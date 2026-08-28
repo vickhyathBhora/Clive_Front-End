@@ -375,7 +375,10 @@ export const initInviteSocketListeners = (
         // 2. Return the filtered array (removing the matched contact)
         return prev.filter((item) => String(item?.id) !== String(contact_id));
       });
-
+    }
+  if (response.type === "new") {
+        alert(`🎉${matchedContact.contact.name}accepted your contact request!`);
+      }
 
       if (typeof setContacts === 'function' && matchedContact) {
         setContacts((prevContacts) => {
@@ -387,9 +390,7 @@ export const initInviteSocketListeners = (
           return [matchedContact, ...shiftedContacts];
         });
       }
-      if (response.type === "new") {
-        alert(`🎉${matchedContact.contact.name}accepted your contact request!`);
-      }
+    
       // 3. Update LocalStorage (Chat_contacts_state)
       const STORAGE_KEY = 'chat_contacts_state';
 
@@ -445,7 +446,7 @@ export const initInviteSocketListeners = (
       if (typeof setSelectedChat === 'function') {
         setSelectedChat();
       }
-    }
+    
   };
 
 
