@@ -8,7 +8,7 @@ import { initSocket } from './socket';
 import { rearrangeRanks } from '../utils/constant';
 
 function DashboardContent() {
-  const { setSocket, organizeContacts } = useChat();
+  const { setSocket, organizeContacts,contacts,reqcontacts } = useChat();
 
   async function fetchOfflineUnseen() {
     const token = localStorage.getItem('token');
@@ -17,7 +17,7 @@ function DashboardContent() {
       return null;
     }
     try {
-      const response = await fetch('https://cliveback-end-production.up.railway.app/api/contacts/offline_unseen', {
+      const response = await fetch('http://localhost:5000/api/contacts/offline_unseen', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -160,7 +160,8 @@ function DashboardContent() {
 
   return (
     <div className="dashboard-container">
-      {/* Top Header */}
+      {console.log(contacts)}
+      {console.log(reqcontacts)}
       <header className="dashboard-topnav">
         <TopNav />
       </header>
