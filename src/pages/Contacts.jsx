@@ -56,7 +56,7 @@ const Contacts = () => {
     }
 
     // 3. Emit socket event to reset unseen in DB
-    if (socket &&Number(contact.rank)!==-1&&Number(contact.rank)!==0) {
+    if (socket &&Number(item.rank)!==0) {
       socket.emit('update_unseen', { contact_id: contactId });
       console.log(`⚡ [FRONTEND] Emitted update_unseen for contact_id: ${contactId}`);
     }
