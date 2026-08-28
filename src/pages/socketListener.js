@@ -337,7 +337,7 @@ export const initInviteSocketListeners = (
 
 const handleInvite = (response) => {
   console.log('📩 Invite socket event received:', response);
-
+alert(`Got New Request From ${response.contact.contact.name}`);
   if (!response?.success) {
     console.error('⚠️ Invite failed:', response?.message);
     return;
