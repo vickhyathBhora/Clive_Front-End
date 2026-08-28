@@ -15,7 +15,7 @@ export const initContactsSocketListeners = (socket, setContacts, setMessages) =>
       if (setContacts) {
         setContacts((prevContacts) =>
           prevContacts.filter((item) => {
-            const id = item.contact?.id || item.contact || item.id;
+            const id = item.contact?.id || item.contact_id || item.id;
             return String(id) !== String(response.targetId);
           })
         );
@@ -361,38 +361,35 @@ export const initInviteSocketListeners = (
     }
 
 
-    if (!response?.success || !response?.contact) return;
+    if (!response?.success || !response?.contact_id) return;
 
-    const contact_id = response.contact;
+    const contact_id = response.contact_id;
 
-if (typeof setReqContacts === 'function') {
-    setReqContacts((prev = []) => {
-      // 1. Find the matching contact inside the state callback
-      const matchedContact = prev.find((item) => String(item?.id) === String(contact));
 
-      if (matchedContact) {
-        // 2. Add to active contacts list
-        if (typeof setContacts === 'function') {
-          setContacts((prevContacts = []) => {
-            const shiftedContacts = (prevContacts || []).map((contact) => ({
-              ...contact,
-              rank: Number(contact.rank || 0) + 1,
-            }));
-            return [matchedContact, ...shiftedContacts];
-          });
-        }
-
-        // 3. Trigger alert safely
-        if (response.type === "new") {
-          const name = matchedContact?.contact?.name || matchedContact?.name || "User";
-          alert(`🎉${name} accepted your contact request!`);
-        }
+    let matchedContact = null;
+    // 2. Remove from Pending Requests list (reqContacts)
+    if (typeof setReqContacts === 'function') {
+      setReqContacts((prev = []) => {
+        // 1. Find and store the matching contact data
+        matchedContact = prev.find((item) => String(item?.id) === String(contact_id));
+        // 2. Return the filtered array (removing the matched contact)
+        return prev.filter((item) => String(item?.id) !== String(contact_id));
+      });
+    }
+  if (response.type === "new") {
+        alert(`🎉${matchedContact.contact.name}accepted your contact request!`);
       }
 
-      // 4. Return the filtered array (removing the matched contact)
-      return prev.filter((item) => String(item?.id) !== String(contact));
-    });
-  }
+      if (typeof setContacts === 'function' && matchedContact) {
+        setContacts((prevContacts) => {
+          // 1. Shift existing contacts down by +1 rank
+          const shiftedContacts = (prevContacts || []).map((contact) => ({
+            ...contact,
+            rank: Number(contact.rank || 0) + 1,
+          }));
+          return [matchedContact, ...shiftedContacts];
+        });
+      }
     
       // 3. Update LocalStorage (Chat_contacts_state)
       const STORAGE_KEY = 'chat_contacts_state';
@@ -403,7 +400,7 @@ if (typeof setReqContacts === 'function') {
 
         // Shift ALL existing contacts by +1 (unconditionally, even if rank was 0)
         const updatedList = (parsed.contacts_meta || []).map((item) => {
-          const isTargetContact = String(item.id) === String(contact);
+          const isTargetContact = String(item.id) === String(contact_id);
           const currentRank = Number(item.rank);
 
           // 1. First shift ALL existing ranked contacts (rank !== 0) by +1
