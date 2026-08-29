@@ -97,11 +97,14 @@
 }
 
 .chat-input-field .MuiOutlinedInput-root {
-  border-radius: 25px;
+  /* REMOVE: height: 50px; */
+  min-height: 48px; /* Allow the height to grow automatically with multiline text */
+  height: auto;
+  border-radius: 24px;
   background-color: #2a2a2a;
   color: #ffffff;
   font-size: 14px;
-  padding: 8px 14px;
+  padding: 8px 14px; /* Adjust padding for clean multiline alignment */
   transition: border-color 0.2s ease;
 }
 
