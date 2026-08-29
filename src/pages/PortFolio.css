@@ -1,19 +1,25 @@
-/* Page Background & Scroll Wrapper */
+/* Container & Scroll Handling */
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  background-color: #0b0f17;
+}
+
 .portfolio-hero-wrapper {
   min-height: 100vh;
-  width: 100vw;
+  width: 100%;
   background-color: #0b0f17;
   background-image: 
     radial-gradient(at 0% 0%, rgba(0, 172, 71, 0.12) 0px, transparent 50%),
     radial-gradient(at 100% 100%, rgba(0, 132, 255, 0.12) 0px, transparent 50%);
   color: #e3e2e6;
   position: relative;
-  overflow-y: auto;
   overflow-x: hidden;
   box-sizing: border-box;
 }
 
-/* Ambient Ambient Glows */
+/* Background Ambient Glows */
 .hero-glow {
   position: absolute;
   border-radius: 50%;
@@ -39,17 +45,17 @@
   right: -150px;
 }
 
-/* Container */
-.portfolio-container {
+/* Container Spacing & Layout */
+.portfolio-hero-wrapper .portfolio-container {
   position: relative;
   z-index: 1;
   padding-top: 32px;
-  padding-bottom: 64px;
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: center !important;
-  justify-content: center !important;
-  margin: 0 auto !important;
+  padding-bottom: 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
 }
 
 /* Glass Header Bar */
@@ -69,6 +75,7 @@
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 40px;
   backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
 .portfolio-title {
@@ -79,7 +86,7 @@
 }
 
 /* Hero Section Card */
-.portfolio-card {
+.portfolio-hero-wrapper .portfolio-card {
   background: rgba(18, 24, 38, 0.65);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
@@ -96,7 +103,7 @@
   box-sizing: border-box;
 }
 
-/* Status Pill */
+/* Status Badge */
 .status-badge {
   display: inline-flex;
   align-items: center;
@@ -119,32 +126,39 @@
   box-shadow: 0 0 10px #22c55e;
 }
 
-/* Typography & Text Clip */
-.hero-heading {
-  font-size: 2.75rem !important;
-  font-weight: 800 !important;
-  line-height: 1.2 !important;
+/* Typography & Gradient Clip */
+.portfolio-card .hero-heading {
+  font-size: 2.75rem;
+  font-weight: 800;
+  line-height: 1.2;
   color: #ffffff;
   letter-spacing: -0.5px;
+  margin: 0;
 }
 
-.gradient-text {
+.portfolio-card .hero-heading .gradient-text {
   background: linear-gradient(135deg, #00ac47 0%, #0084ff 100%);
-  -webkit-background-clip: text !important;
-  background-clip: text !important;
-  -webkit-text-fill-color: transparent !important;
-  color: transparent !important;
-  display: inline !important;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  display: inline;
 }
 
-.hero-subtitle {
-  font-size: 1.05rem !important;
-  color: #94a3b8 !important;
+.portfolio-card .hero-subtitle {
+  font-size: 1.05rem;
+  color: #94a3b8;
   max-width: 540px;
-  line-height: 1.6 !important;
+  line-height: 1.6;
+  margin: 0;
 }
 
-/* Primary Google CTA Button */
+.portfolio-card .portfolio-alert {
+  width: 100%;
+  border-radius: 12px;
+}
+
+/* Primary Button CTA */
 .hero-cta-wrapper {
   margin-top: 10px;
   width: 100%;
@@ -152,32 +166,33 @@
   justify-content: center;
 }
 
-.portfolio-btn.primary-cta {
-  background: linear-gradient(135deg, #0084ff 0%, #0056b3 100%) !important;
-  padding: 14px 40px !important;
-  font-size: 1.05rem !important;
-  font-weight: 600 !important;
-  border-radius: 30px !important;
-  text-transform: none !important;
-  color: #ffffff !important;
-  box-shadow: 0 10px 30px rgba(0, 132, 255, 0.4) !important;
-  transition: all 0.25s ease !important;
+.portfolio-hero-wrapper .MuiButton-root.portfolio-btn.primary-cta {
+  background: linear-gradient(135deg, #0084ff 0%, #0056b3 100%);
+  padding: 14px 40px;
+  font-size: 1.05rem;
+  font-weight: 600;
+  border-radius: 30px;
+  text-transform: none;
+  color: #ffffff;
+  box-shadow: 0 10px 30px rgba(0, 132, 255, 0.4);
+  transition: all 0.25s ease;
 }
 
-.portfolio-btn.primary-cta:hover {
+.portfolio-hero-wrapper .MuiButton-root.portfolio-btn.primary-cta:hover {
   transform: translateY(-3px);
-  box-shadow: 0 14px 36px rgba(0, 132, 255, 0.6) !important;
+  box-shadow: 0 14px 36px rgba(0, 132, 255, 0.6);
 }
 
-/* Features Grid & Hover Cards */
-.features-grid {
-  margin-top: 28px !important;
-  width: 100% !important;
+/* Feature Grid & Cards */
+.portfolio-hero-wrapper .features-grid {
+  margin-top: 28px;
+  width: 100%;
 }
 
 .feature-card {
   background: rgba(18, 24, 38, 0.45);
   backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.07);
   padding: 24px;
   border-radius: 20px;
@@ -211,30 +226,37 @@
 .feature-icon-box.purple { background: rgba(168, 85, 247, 0.15); color: #c084fc; }
 .feature-icon-box.orange { background: rgba(249, 115, 22, 0.15); color: #fb923c; }
 
-.feature-title {
-  color: #ffffff !important;
-  font-weight: 600 !important;
-  font-size: 1.05rem !important;
+.feature-card .feature-title {
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 1.05rem;
+  margin: 0;
 }
 
-.feature-desc {
-  color: #94a3b8 !important;
-  font-size: 0.875rem !important;
-  line-height: 1.5 !important;
+.feature-card .feature-desc {
+  color: #94a3b8;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  margin: 0;
 }
 
-/* Mobile Responsiveness */
+/* Mobile Responsiveness & Fixes */
 @media (max-width: 600px) {
-  .hero-heading {
-    font-size: 2rem !important;
+  .portfolio-hero-wrapper .portfolio-container {
+    padding-top: 20px;
+    padding-bottom: 100px;
   }
 
   .portfolio-card {
     padding: 32px 20px;
   }
 
-  .portfolio-container {
-    padding-top: 20px;
-    padding-bottom: 40px;
+  .portfolio-card .hero-heading {
+    font-size: 1.85rem;
+  }
+
+  .glow-1, .glow-2 {
+    width: 300px;
+    height: 300px;
   }
 }
