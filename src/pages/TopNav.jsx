@@ -117,7 +117,7 @@ export function TopNav() {
 <div className={`top-nav-left ${isMobileSearchOpen ? 'mobile-hidden' : ''}`}>
       <div className="top-nav-brand">
         <img 
-          src="/logo.png" 
+          src="https://www.google.com/imgres?q=chatLive%20icon%20svg%20green%20icon&imgurl=https%3A%2F%2Fcdn-icons-png.flaticon.com%2F512%2F4564%2F4564089.png&imgrefurl=https%3A%2F%2Fwww.flaticon.com%2Ffree-icon%2Fchat_4564089&docid=r6RafKeDX6UM_M&tbnid=jm7XrGnXqe2Y-M&vet=12ahUKEwjex5rCpsaWAxWlp1YBHRTSEEMQnPAOegQIORAA..i&w=512&h=512&hcb=2&ved=2ahUKEwjex5rCpsaWAxWlp1YBHRTSEEMQnPAOegQIORAA" 
           alt="ChatLive Logo" 
           className="google-chat-logo" 
           style={{ width: '28px', height: '28px', objectFit: 'contain' }}
