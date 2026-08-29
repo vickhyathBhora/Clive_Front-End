@@ -5,8 +5,7 @@ import {
   Button,
   Container,
   CircularProgress,
-  Alert,
-  Grid
+  Alert
 } from '@mui/material';
 import GoogleIcon from '@mui/icons-material/Google';
 import FlashOnIcon from '@mui/icons-material/FlashOn';
@@ -57,18 +56,18 @@ export function Portfolio() {
       <div className="hero-glow glow-1"></div>
       <div className="hero-glow glow-2"></div>
 
-      <Container maxWidth="md" className="portfolio-container">
-        {/* TOP BRAND HEADER */}
+      <Container maxWidth="sm" className="portfolio-container">
+        {/* BRAND HEADER */}
         <header className="portfolio-header">
           <div className="portfolio-brand">
-            <svg className="google-chat-logo" viewBox="0 0 24 24" width="32" height="32">
+            <svg className="google-chat-logo" viewBox="0 0 24 24" width="26" height="26">
               <path fill="#00AC47" d="M12 2C6.48 2 2 6.48 2 12c0 2.17.69 4.19 1.87 5.84L2 22l4.34-1.74C7.94 21.36 9.89 22 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2z" />
             </svg>
             <span className="portfolio-title">ChatLive</span>
           </div>
         </header>
 
-        {/* HERO SECTION */}
+        {/* SINGLE HERO CARD */}
         <Box className="portfolio-card">
           <div className="status-badge">
             <span className="live-dot"></span>
@@ -82,6 +81,22 @@ export function Portfolio() {
           <Typography variant="body1" className="hero-subtitle">
             Experience lightning-fast communication, real-time sync, and seamless user discovery built for web and mobile.
           </Typography>
+
+          {/* INLINE FEATURE CHIPS */}
+          <div className="hero-features-chips">
+            <div className="feature-chip blue">
+              <FlashOnIcon fontSize="small" /> Ultra Fast
+            </div>
+            <div className="feature-chip green">
+              <ForumIcon fontSize="small" /> Discovery
+            </div>
+            <div className="feature-chip purple">
+              <DevicesIcon fontSize="small" /> Responsive
+            </div>
+            <div className="feature-chip orange">
+              <SecurityIcon fontSize="small" /> Secure Auth
+            </div>
+          </div>
 
           {error && (
             <Alert severity="error" className="portfolio-alert">
@@ -102,49 +117,6 @@ export function Portfolio() {
             </Button>
           </div>
         </Box>
-
-        {/* 2x2 DESKTOP / 1x4 MOBILE FEATURES GRID */}
-        <Grid container spacing={2.5} className="features-grid">
-          <Grid item xs={12} sm={6}>
-            <div className="feature-card">
-              <div className="feature-icon-box blue">
-                <FlashOnIcon />
-              </div>
-              <Typography variant="h6" className="feature-title">Ultra Fast</Typography>
-              <Typography variant="body2" className="feature-desc">Powered by Socket.io for zero-latency messaging.</Typography>
-            </div>
-          </Grid>
-
-          <Grid item xs={12} sm={6}>
-            <div className="feature-card">
-              <div className="feature-icon-box green">
-                <ForumIcon />
-              </div>
-              <Typography variant="h6" className="feature-title">User Discovery</Typography>
-              <Typography variant="body2" className="feature-desc">Search registered users and send instant connection requests.</Typography>
-            </div>
-          </Grid>
-
-          <Grid item xs={12} sm={6}>
-            <div className="feature-card">
-              <div className="feature-icon-box purple">
-                <DevicesIcon />
-              </div>
-              <Typography variant="h6" className="feature-title">Fully Responsive</Typography>
-              <Typography variant="body2" className="feature-desc">Optimized interface for desktop, tablet, and mobile views.</Typography>
-            </div>
-          </Grid>
-
-          <Grid item xs={12} sm={6}>
-            <div className="feature-card">
-              <div className="feature-icon-box orange">
-                <SecurityIcon />
-              </div>
-              <Typography variant="h6" className="feature-title">Secure Auth</Typography>
-              <Typography variant="body2" className="feature-desc">Protected by JWT tokens and Google OAuth 2.0 security.</Typography>
-            </div>
-          </Grid>
-        </Grid>
       </Container>
     </div>
   );
