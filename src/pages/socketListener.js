@@ -358,74 +358,50 @@ export const initInviteSocketListeners = (
 if (typeof setIsAccepting === 'function') {
     setIsAccepting(false);
   }
-
- // 1. Log target ID extraction
-  const targetId = String(response?.contactId || '');
-  console.log('🔍 [1] Target Contact ID:', targetId);
+const targetId = String(response?.contactId || '');
+  console.log('🔍 Target Contact ID:', targetId);
 
   if (!response?.success || !targetId) {
-    console.warn('⚠️ [1] Missing success status or valid contact ID in payload:', response);
+    console.warn('⚠️ Missing success status or valid contact ID in payload:', response);
     return;
   }
 
-  let updatedContact = null;
-
-  // 2. Safely find and filter inside setReqContacts
   if (typeof setReqContacts === 'function') {
     setReqContacts((prev = []) => {
-      console.log('📋 [2] Pending requests before search (prev):', prev);
-
-      const found = prev.find((item) => {
-        const itemId = String(item?.contact_id);
-        console.log(`Checking item.contact_id (${itemId}) === targetId (${targetId}) ->`, itemId === targetId);
-        return itemId === targetId;
-      });
-
-      console.log('🎯 [2] Found contact in pending requests:', found);
+      // 1. Find target contact in current state
+      const found = prev.find((item) => String(item?.contact_id) === targetId);
 
       if (found) {
-        updatedContact = {
+        const updatedContact = {
           ...found,
           rank: 1,
           status: 'accepted',
         };
-        console.log('✅ [2] Constructed updatedContact:', updatedContact);
+
+        // 2. Safely trigger setContacts INSIDE where updatedContact exists
+        if (typeof setContacts === 'function') {
+          setContacts((prevContacts = []) => {
+            const shiftedContacts = (prevContacts || []).map((contact) => ({
+              ...contact,
+              rank: Number(contact.rank || 0) + 1,
+            }));
+
+            console.log('🎉 Pushing updatedContact into contacts array:', updatedContact);
+            return [updatedContact, ...shiftedContacts];
+          });
+        }
+
+        if (response.type === 'new') {
+          const name = updatedContact?.name || updatedContact?.contact?.name;
+          if (name) alert(`🎉 ${name} accepted your contact request!`);
+        }
       } else {
-        console.warn('⚠️ [2] Target ID not found in pending requests array!');
+        console.warn('⚠️ Target ID not found in pending requests array!');
       }
 
-      const filtered = prev.filter((item) => String(item?.contact_id) !== targetId);
-      console.log('🧹 [2] Pending requests after filter:', filtered);
-      return filtered;
+      // 3. Filter out matched item from pending requests
+      return prev.filter((item) => String(item?.contact_id) !== targetId);
     });
-  }
-
-  // 3. Update active contacts list
-  console.log('🚀 [3] Checking updatedContact right before step 3 check:', updatedContact);
-
-  if (updatedContact) {
-    console.log('✅ [3] Entering setContacts block...');
-    if (typeof setContacts === 'function') {
-      setContacts((prevContacts = []) => {
-        console.log('📦 [3] prevContacts before adding new contact:', prevContacts);
-
-        const shiftedContacts = (prevContacts || []).map((contact) => ({
-          ...contact,
-          rank: Number(contact.rank || 0) + 1,
-        }));
-
-        const result = [updatedContact, ...shiftedContacts];
-        console.log('🎉 [3] New contacts array to return:', result);
-        return result;
-      });
-    }
-
-    if (response.type === 'new') {
-      const name = updatedContact?.name || updatedContact?.contact?.name;
-      if (name) alert(`🎉 ${name} accepted your contact request!`);
-    }
-  } else {
-    console.error('❌ [3] updatedContact was NULL! Step 3 was skipped.');
   }
   // Update LocalStorage (chat_contacts_state)
   const STORAGE_KEY = 'chat_contacts_state';
