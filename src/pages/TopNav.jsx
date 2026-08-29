@@ -98,10 +98,8 @@ export function TopNav() {
     }
 
     if (searchLevel === 0) {
-      console.log('Opening chat with contact:', userItem);
       handleSelectContact(userItem);
     } else if (searchLevel === 1) {
-      console.log('Sending connection request to user:', userItem);
       socket.emit('send_invite', userItem.id);
     }
 

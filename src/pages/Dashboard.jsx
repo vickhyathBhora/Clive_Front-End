@@ -47,7 +47,6 @@ function DashboardContent() {
       try {
         const response = await fetchOfflineUnseen();
         const offlineContacts = response?.data || [];
-        console.log('📥 Offline unseen contacts:', offlineContacts);
 
         let payloadToSend = null;
 
@@ -59,7 +58,6 @@ function DashboardContent() {
               dirty_slice,
               contacts_meta: slicePayload
             };
-            console.log('🔄 Re-ranked Contacts Payload Ready:', payloadToSend);
           }
 
         } else {
@@ -75,7 +73,6 @@ function DashboardContent() {
                 return rank >= 1 && rank <= toRank;
               });
 
-              console.log(`📦 Filtered metadata slice (ranks 1 to ${toRank}):`, filteredMeta);
 
               payloadToSend = {
                 dirty_slice: cache.dirty_slice,
@@ -85,15 +82,12 @@ function DashboardContent() {
               localStorage.removeItem(LOCAL_CACHE_KEY);
             }
           } else {
-            console.warn('⚠️ No local cache found to filter ranks.');
           }
         }
 
         if (payloadToSend && payloadToSend.contacts_meta?.length > 0) {
-          console.log('🔄 Sync pending found. Syncing local changes to server...', payloadToSend);
           socket.emit('update_contact_rows', payloadToSend);
         } else {
-          console.log('📡 No pending changes. Requesting initial data from server...');
           socket.emit('request_initial_data');
         }
 
@@ -104,14 +98,12 @@ function DashboardContent() {
     };
 
     const handleConnect = () => {
-      console.log('✅ Connected to socket server with ID:', socket.id);
       initFlow();
     };
 
     socket.on('connect', handleConnect);
 
     socket.on('update_contact_rows_res', (res) => {
-      console.log('✅ Server acknowledged contact row update:', res);
       if (res) {
         localStorage.removeItem(LOCAL_CACHE_KEY);
         socket.emit('request_initial_data');
@@ -119,7 +111,6 @@ function DashboardContent() {
     });
 
     socket.on('initial_data', (response) => {
-      console.log('📦 Initial Data Received from Server:', response);
       if (response?.res) {
         const contacts = response.res;
         organizeContacts(contacts);
@@ -134,7 +125,6 @@ function DashboardContent() {
         };
 
         localStorage.setItem(LOCAL_CACHE_KEY, JSON.stringify(freshCache));
-        console.log('💾 Synced contacts state with LocalStorage');
       }
     });
 
@@ -151,8 +141,6 @@ function DashboardContent() {
 
   return (
     <div className="dashboard-container">
-      {console.log(contacts)}
-      {console.log(reqContacts)}
       <header className="dashboard-topnav">
         <TopNav />
       </header>

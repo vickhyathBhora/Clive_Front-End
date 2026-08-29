@@ -69,7 +69,6 @@ export const Messages = () => {
   useEffect(() => {
     if (!selectedChat?.contact_id || !socket) return;
 
-    console.log('[Chat UI] Fetching messages for contactId:', selectedChat.contact_id);
     setMessages([]);
 
     if (chatStatus === 'accepted') {
