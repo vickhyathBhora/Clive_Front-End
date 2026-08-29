@@ -182,4 +182,5 @@
   overflow-wrap: anywhere !important;
   white-space: pre-wrap !important;
   resize: none;
+  padding: 10px 0;
 }
