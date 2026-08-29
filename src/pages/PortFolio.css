@@ -1,9 +1,8 @@
 /* Container and Scroll Handling */
 .portfolio-hero-wrapper {
   min-height: 100vh;
-  height: 100vh;
   width: 100vw;
-  background-color: #131314;
+  background-color: #0b0f17;
   color: #e3e2e6;
   position: relative;
   overflow-y: auto;
@@ -11,29 +10,29 @@
   box-sizing: border-box;
 }
 
-/* Background Lights */
+/* Background Ambient Glows */
 .hero-glow {
   position: absolute;
   border-radius: 50%;
-  filter: blur(120px);
-  opacity: 0.25;
+  filter: blur(140px);
+  opacity: 0.2;
   pointer-events: none;
   z-index: 0;
 }
 
 .glow-1 {
-  width: 350px;
-  height: 350px;
+  width: 450px;
+  height: 450px;
   background: #00ac47;
-  top: -80px;
-  left: -80px;
+  top: -120px;
+  left: -100px;
 }
 
 .glow-2 {
-  width: 400px;
-  height: 400px;
+  width: 500px;
+  height: 500px;
   background: #0084ff;
-  bottom: -100px;
+  bottom: -150px;
   right: -100px;
 }
 
@@ -41,7 +40,7 @@
 .portfolio-container {
   position: relative;
   z-index: 1;
-  padding-top: 40px;
+  padding-top: 48px;
   padding-bottom: 64px;
   display: flex !important;
   flex-direction: column !important;
@@ -55,7 +54,7 @@
   width: 100%;
   display: flex;
   justify-content: center;
-  margin-bottom: 24px;
+  margin-bottom: 32px;
 }
 
 .portfolio-brand {
@@ -65,26 +64,27 @@
 }
 
 .portfolio-title {
-  font-size: 1.5rem;
+  font-size: 1.6rem;
   font-weight: 700;
   color: #ffffff;
+  letter-spacing: -0.5px;
 }
 
 /* Hero Section Card */
 .portfolio-card {
-  background: rgba(30, 31, 32, 0.7);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  background: rgba(22, 27, 38, 0.6);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  padding: 40px 32px;
-  border-radius: 24px;
+  padding: 48px 36px;
+  border-radius: 28px;
   width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: 18px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+  gap: 20px;
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.5);
   box-sizing: border-box;
 }
 
@@ -93,12 +93,12 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background-color: rgba(0, 172, 71, 0.12);
-  border: 1px solid rgba(0, 172, 71, 0.3);
+  background-color: rgba(0, 172, 71, 0.1);
+  border: 1px solid rgba(0, 172, 71, 0.25);
   color: #34d399;
-  padding: 6px 14px;
+  padding: 6px 16px;
   border-radius: 20px;
-  font-size: 0.825rem;
+  font-size: 0.85rem;
   font-weight: 600;
 }
 
@@ -107,30 +107,31 @@
   height: 8px;
   background-color: #22c55e;
   border-radius: 50%;
-  box-shadow: 0 0 8px #22c55e;
+  box-shadow: 0 0 10px #22c55e;
 }
 
-/* Headings */
+/* Headings & Text Clipping Fix */
 .hero-heading {
-  font-size: 2.5rem !important;
+  font-size: 2.6rem !important;
   font-weight: 800 !important;
-  line-height: 1.2 !important;
+  line-height: 1.25 !important;
   color: #ffffff;
 }
 
 .gradient-text {
   background: linear-gradient(135deg, #00ac47 0%, #0084ff 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  color: transparent; /* Fallback for browsers */
-  display: inline-block;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  color: transparent !important;
+  display: inline !important;
 }
+
 .hero-subtitle {
-  font-size: 1rem !important;
+  font-size: 1.05rem !important;
   color: #94a3b8 !important;
-  max-width: 520px;
-  line-height: 1.5 !important;
+  max-width: 540px;
+  line-height: 1.6 !important;
 }
 
 .portfolio-alert {
@@ -138,9 +139,9 @@
   border-radius: 12px !important;
 }
 
-/* Button */
+/* Call to Action Button */
 .hero-cta-wrapper {
-  margin-top: 8px;
+  margin-top: 12px;
   width: 100%;
   display: flex;
   justify-content: center;
@@ -148,7 +149,7 @@
 
 .portfolio-btn.primary-cta {
   background: linear-gradient(135deg, #0084ff 0%, #0056b3 100%) !important;
-  padding: 12px 32px !important;
+  padding: 14px 36px !important;
   font-size: 1rem !important;
   font-weight: 600 !important;
   border-radius: 30px !important;
@@ -160,74 +161,74 @@
 
 .portfolio-btn.primary-cta:hover {
   transform: translateY(-2px);
-  box-shadow: 0 12px 28px rgba(0, 132, 255, 0.5) !important;
+  box-shadow: 0 12px 32px rgba(0, 132, 255, 0.5) !important;
 }
 
-/* 2x2 Centered Desktop Features Grid */
+/* Features Grid */
 .features-grid {
-  margin-top: 24px !important;
+  margin-top: 28px !important;
   width: 100% !important;
-  display: flex !important;
-  justify-content: center !important;
 }
 
 .feature-card {
-  background: #1e1f20;
-  border: 1px solid #28292a;
-  padding: 20px;
-  border-radius: 16px;
+  background: rgba(22, 27, 38, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 24px;
+  border-radius: 20px;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 10px;
+  gap: 12px;
   height: 100%;
   box-sizing: border-box;
-  transition: border-color 0.2s ease, transform 0.2s ease;
+  transition: all 0.25s ease;
 }
 
 .feature-card:hover {
-  border-color: #38393a;
-  transform: translateY(-2px);
+  background: rgba(22, 27, 38, 0.7);
+  border-color: rgba(255, 255, 255, 0.12);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
 }
 
 .feature-icon-box {
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.feature-icon-box.blue { background: rgba(0, 132, 255, 0.15); color: #60a5fa; }
-.feature-icon-box.green { background: rgba(0, 172, 71, 0.15); color: #34d399; }
-.feature-icon-box.purple { background: rgba(168, 85, 247, 0.15); color: #c084fc; }
-.feature-icon-box.orange { background: rgba(249, 115, 22, 0.15); color: #fb923c; }
+.feature-icon-box.blue { background: rgba(0, 132, 255, 0.12); color: #60a5fa; }
+.feature-icon-box.green { background: rgba(0, 172, 71, 0.12); color: #34d399; }
+.feature-icon-box.purple { background: rgba(168, 85, 247, 0.12); color: #c084fc; }
+.feature-icon-box.orange { background: rgba(249, 115, 22, 0.12); color: #fb923c; }
 
 .feature-title {
   color: #ffffff !important;
   font-weight: 600 !important;
-  font-size: 1rem !important;
+  font-size: 1.05rem !important;
 }
 
 .feature-desc {
   color: #94a3b8 !important;
-  font-size: 0.85rem !important;
-  line-height: 1.4 !important;
+  font-size: 0.875rem !important;
+  line-height: 1.5 !important;
 }
 
-/* Mobile Breakpoint */
+/* Responsive Scaling */
 @media (max-width: 600px) {
   .hero-heading {
-    font-size: 1.8rem !important;
+    font-size: 1.9rem !important;
   }
 
   .portfolio-card {
-    padding: 28px 16px;
+    padding: 32px 20px;
   }
 
   .portfolio-container {
-    padding-top: 20px;
-    padding-bottom: 32px;
+    padding-top: 24px;
+    padding-bottom: 40px;
   }
 }
