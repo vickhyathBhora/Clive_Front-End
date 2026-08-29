@@ -120,9 +120,12 @@
 
 .gradient-text {
   background: linear-gradient(135deg, #00ac47 0%, #0084ff 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
+  color: transparent; /* Fallback for browsers */
+  display: inline-block;
 }
-
 .hero-subtitle {
   font-size: 1rem !important;
   color: #94a3b8 !important;
