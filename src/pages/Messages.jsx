@@ -181,11 +181,11 @@ export const Messages = () => {
           slotProps={{
             input: {
               endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton onClick={handleSend} className="chat-send-btn">
-                    <SendIcon />
-                  </IconButton>
-                </InputAdornment>
+                <InputAdornment position="end" sx={{ alignSelf: 'center', margin: 0 }}>
+  <IconButton onClick={handleSend} className="chat-send-btn">
+    <SendIcon />
+  </IconButton>
+</InputAdornment>
               ),
             },
           }}

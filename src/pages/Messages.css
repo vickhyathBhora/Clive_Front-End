@@ -130,6 +130,10 @@
 .chat-send-btn {
   color: #0084ff;
   transition: transform 0.15s ease, color 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
 }
 
 .chat-send-btn:hover {
