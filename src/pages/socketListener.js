@@ -355,12 +355,11 @@ export const initInviteSocketListeners = (
 
   const handleAcceptInviteRes = (response) => {
   console.log('✅ Accept invite response received:', response);
-
-  if (typeof setIsAccepting === 'function') {
+if (typeof setIsAccepting === 'function') {
     setIsAccepting(false);
   }
 
-  // 1. FIX: Support both response.contact_id AND response.contact (e.g. { contact: '1' })
+  // 1. FIX: Support target contactId
   const targetId = String(response?.contactId || '');
 
   if (!response?.success || !targetId) {
@@ -368,19 +367,27 @@ export const initInviteSocketListeners = (
     return;
   }
 
-const found = (reqContacts || []).find((item) => String(item?.contact_id) === targetId);
-if (typeof setReqContacts === 'function') {
-    setReqContacts((prev = []) => 
-      prev.filter((item) => String(item?.contact_id) !== targetId)
-    );
+  let updatedContact = null;
+
+  // 2. Safely find and filter inside setReqContacts updater using 'prev' state
+  if (typeof setReqContacts === 'function') {
+    setReqContacts((prev = []) => {
+      const found = prev.find((item) => String(item?.contact_id) === targetId);
+
+      if (found) {
+        updatedContact = {
+          ...found,
+          rank: 1,
+          status: 'accepted',
+        };
+      }
+
+      return prev.filter((item) => String(item?.contact_id) !== targetId);
+    });
   }
-  if (found) {
-    const updatedContact = {
-      ...found,
-      rank: 1,
-      status: 'accepted',
-    };
-  }
+
+  // 3. Update active contacts list if the contact was found
+  if (updatedContact) {
     if (typeof setContacts === 'function') {
       setContacts((prevContacts = []) => {
         console.log('prevContacts:', prevContacts);
@@ -393,11 +400,12 @@ if (typeof setReqContacts === 'function') {
         return [updatedContact, ...shiftedContacts];
       });
     }
+
     if (response.type === 'new') {
       const name = updatedContact?.name || updatedContact?.contact?.name;
       if (name) alert(`🎉 ${name} accepted your contact request!`);
     }
-
+  }
   // Update LocalStorage (chat_contacts_state)
   const STORAGE_KEY = 'chat_contacts_state';
 
