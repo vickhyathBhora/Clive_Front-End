@@ -374,6 +374,7 @@ export const initInviteSocketListeners = (
       const matchedContact = prev.find((item) => {
         const itemId = String(item?.contact_id);
         if (itemId === targetId) {
+          console.log(contact);
       return { ...item, rank: Number(contact.rank || 0) + 1, }; // Return updated object with rank = 1
     }
   });
