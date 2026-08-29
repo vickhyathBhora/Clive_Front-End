@@ -82,7 +82,7 @@
 
 /* Bottom Input Container fixed height */
 .chat-input-wrapper {
-  padding: 20px 16px;
+  padding: 16px;
   background-color: #1e1e1e;
   border-top: 1px solid #2a2a2a;
   display: flex;
@@ -97,7 +97,6 @@
 }
 
 .chat-input-field .MuiOutlinedInput-root {
-  height: 50px;
   border-radius: 25px;
   background-color: #2a2a2a;
   color: #ffffff;
