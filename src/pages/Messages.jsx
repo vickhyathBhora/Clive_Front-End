@@ -1,7 +1,9 @@
+// Messages.js
 import React, { useEffect, useState, useRef } from 'react';
 import { useChat } from './ChatContext';
 import { Box, TextField, IconButton, InputAdornment } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack'; // CHANGED: Imported back icon
 import './Messages.css';
 
 export const Messages = () => {
@@ -9,6 +11,7 @@ export const Messages = () => {
     messages,
     setMessages,
     selectedChat,
+    setSelectedChat, // CHANGED: Added setSelectedChat from context
     socket,
     user,
     isAccepting,
@@ -19,7 +22,6 @@ export const Messages = () => {
 
   const messagesEndRef = useRef(null);
 
-  // Safely grab contact ID from selectedChat object structure
   const contactId = selectedChat?.contact_id;
   const targetUserId = selectedChat?.contact?.id;
   const contactName = selectedChat?.contact?.name || selectedChat?.name || 'User';
@@ -30,7 +32,6 @@ export const Messages = () => {
   const currentUserId = storedUser?.id || user?.id || socket?.user?.id || socket?.userId;
   const receiverId = selectedChat?.contact?.id;
 
-  // Auto-scroll to bottom whenever messages list updates
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
@@ -43,7 +44,6 @@ export const Messages = () => {
     const trimmedText = textInput.trim();
     if (!trimmedText) return;
 
-    // Emit "sendmessage" event with required payload
     socket.emit('send_message', {
       sender_id: currentUserId,
       receiver_id: receiverId,
@@ -67,8 +67,6 @@ export const Messages = () => {
     socket.emit('accept_invite', { targetUserId: targetUserId });
   };
 
-
-  // Fetch messages when selectedChat changes
   useEffect(() => {
     if (!selectedChat?.contact_id || !socket) return;
 
@@ -80,7 +78,6 @@ export const Messages = () => {
     }
   }, [contactId, chatStatus, socket, setMessages]);
 
-  // Check if chat is selected
   if (!selectedChat) {
     return <div className="no-chat">Select a contact to start messaging</div>;
   }
@@ -92,6 +89,14 @@ export const Messages = () => {
     if (isSentByMe) {
       return (
         <div className="pending-container" style={{ padding: '20px', color: '#fff' }}>
+          {/* CHANGED: Mobile back button for pending sent view */}
+          <IconButton 
+            className="mobile-back-btn" 
+            onClick={() => setSelectedChat(null)}
+            style={{ color: '#fff', marginBottom: '10px' }}
+          >
+            <ArrowBackIcon />
+          </IconButton>
           <h3>Waiting for Response</h3>
           <p>Invitation sent to <strong>{contactName}</strong>. Waiting for them to accept.</p>
         </div>
@@ -100,6 +105,14 @@ export const Messages = () => {
 
     return (
       <div className="pending-container" style={{ padding: '20px', color: '#fff' }}>
+        {/* CHANGED: Mobile back button for pending received view */}
+        <IconButton 
+          className="mobile-back-btn" 
+          onClick={() => setSelectedChat(null)}
+          style={{ color: '#fff', marginBottom: '10px' }}
+        >
+          <ArrowBackIcon />
+        </IconButton>
         <h3>Connection Request</h3>
         <p><strong>{contactName}</strong> sent you a connection request.</p>
         <div className="action-buttons" style={{ marginTop: '15px', display: 'flex', gap: '10px' }}>
@@ -118,19 +131,25 @@ export const Messages = () => {
           >
             {isAccepting ? 'Accepting...' : 'Accept'}
           </button>
-
         </div>
       </div>
     );
   }
 
-  // Render Chat View (Accepted Status)
   const messageList = Array.isArray(messages) ? messages : [];
 
   return (
     <div className="messages-container">
-      <div className="messages-header">
-        <h3>Chat with {contactName}</h3>
+      <div className="messages-header" style={{ display: 'flex', alignItems: 'center' }}>
+        {/* CHANGED: Added Back Button for Mobile view */}
+        <IconButton 
+          className="mobile-back-btn" 
+          onClick={() => setSelectedChat(null)}
+          style={{ color: '#fff', marginRight: '8px' }}
+        >
+          <ArrowBackIcon />
+        </IconButton>
+        <h3 style={{ margin: 0 }}>Chat with {contactName}</h3>
       </div>
 
       <div className="messages-list">
@@ -147,7 +166,6 @@ export const Messages = () => {
             </div>
           );
         })}
-        {/* Invisible scroll target element */}
         <div ref={messagesEndRef} />
       </div>
 

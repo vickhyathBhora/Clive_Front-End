@@ -1,3 +1,4 @@
+// Dashboard.js
 import React, { useEffect } from 'react';
 import Contacts from './Contacts';
 import Messages from './Messages';
@@ -8,7 +9,7 @@ import { initSocket } from './socket';
 import { rearrangeRanks } from '../utils/constant';
 
 function DashboardContent() {
-  const { setSocket, organizeContacts,contacts,reqContacts } = useChat();
+  const { setSocket, organizeContacts, contacts, reqContacts, selectedChat } = useChat(); // Added selectedChat from hook
 
   async function fetchOfflineUnseen() {
     const token = localStorage.getItem('token');
@@ -42,10 +43,8 @@ function DashboardContent() {
     const socket = initSocket();
     setSocket(socket);
 
-    // 1. Unified sync & socket connection logic
     const initFlow = async () => {
       try {
-        // Fetch offline unseen rows first
         const response = await fetchOfflineUnseen();
         const offlineContacts = response?.data || [];
         console.log('📥 Offline unseen contacts:', offlineContacts);
@@ -53,7 +52,6 @@ function DashboardContent() {
         let payloadToSend = null;
 
         if (offlineContacts.length > 0) {
-          // Branch 1: Handle offline updates and re-rank
           const { dirty_slice, slicePayload } = rearrangeRanks(offlineContacts) || {};
 
           if (slicePayload && slicePayload.length > 0) {
@@ -65,7 +63,6 @@ function DashboardContent() {
           }
 
         } else {
-          // Branch 2: No offline contacts, check local cache dirty slice
           const rawCache = localStorage.getItem(LOCAL_CACHE_KEY);
 
           if (rawCache) {
@@ -85,7 +82,6 @@ function DashboardContent() {
                 contacts_meta: filteredMeta
               };
 
-              // Clean up old state after pulling slice
               localStorage.removeItem(LOCAL_CACHE_KEY);
             }
           } else {
@@ -93,7 +89,6 @@ function DashboardContent() {
           }
         }
 
-        // 2. Decide next socket action
         if (payloadToSend && payloadToSend.contacts_meta?.length > 0) {
           console.log('🔄 Sync pending found. Syncing local changes to server...', payloadToSend);
           socket.emit('update_contact_rows', payloadToSend);
@@ -104,7 +99,6 @@ function DashboardContent() {
 
       } catch (err) {
         console.error('❌ Failed during sync init flow:', err);
-        // Fallback: request initial data anyway if offline fetch fails
         socket.emit('request_initial_data');
       }
     };
@@ -114,7 +108,6 @@ function DashboardContent() {
       initFlow();
     };
 
-    // 3. Attach socket listeners
     socket.on('connect', handleConnect);
 
     socket.on('update_contact_rows_res', (res) => {
@@ -145,12 +138,10 @@ function DashboardContent() {
       }
     });
 
-    // 4. Manual trigger if socket connected before listener attachment
     if (socket.connected) {
       handleConnect();
     }
 
-    // 5. Cleanup
     return () => {
       socket.off('connect', handleConnect);
       socket.off('update_contact_rows_res');
@@ -166,8 +157,8 @@ function DashboardContent() {
         <TopNav />
       </header>
 
-      {/* Main Body Layout */}
-      <div className="dashboard-body">
+      {/* CHANGED: Conditionally append 'has-active-chat' class when selectedChat is open */}
+      <div className={`dashboard-body ${selectedChat ? 'has-active-chat' : ''}`}>
         <aside className="contacts-section">
           <Contacts />
         </aside>
@@ -179,7 +170,6 @@ function DashboardContent() {
   );
 }
 
-// Main Export wraps the Content in ChatProvider
 export function Dashboard() {
   return (
     <ChatProvider>

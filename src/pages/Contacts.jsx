@@ -37,11 +37,10 @@ const Contacts = () => {
   const handleSelectContact = (item) => {
     if (!item) return;
 
-    const contactId = String(item.contact_id || item.id);
+    const contactId = String(item.contact_id);
 
     // 1. Set Selected Chat
     setSelectedChat(item);
-
     // 2. Clear unseen badge in React state UI
     if (typeof setContacts === 'function') {
       setContacts((prevContacts) =>
@@ -57,6 +56,7 @@ const Contacts = () => {
 
     // 3. Emit socket event to reset unseen in DB
     if (socket &&Number(item.rank)!==0) {
+     
       socket.emit('update_unseen', { contact_id: contactId });
       console.log(`⚡ [FRONTEND] Emitted update_unseen for contact_id: ${contactId}`);
     }
@@ -96,7 +96,6 @@ const Contacts = () => {
               contactObj.avatar_url ||
               'https://api.dicebear.com/7.x/avataaars/svg?seed=default';
 
-            const isMenuOpen = activeMenu?.id === targetId;
 
             return (
               <div
