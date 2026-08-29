@@ -61,7 +61,6 @@ setReqContacts(required);
     if (socket &&Number(item.rank)!==0) {
      
       socket.emit('update_unseen', { contact_id: contactId });
-      console.log(`⚡ [FRONTEND] Emitted update_unseen for contact_id: ${contactId}`);
     }
   };
 

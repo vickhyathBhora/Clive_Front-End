@@ -1,4 +1,3 @@
-// Dashboard.js
 import React, { useEffect } from 'react';
 import Contacts from './Contacts';
 import Messages from './Messages';
@@ -9,7 +8,7 @@ import { initSocket } from './socket';
 import { rearrangeRanks } from '../utils/constant';
 
 function DashboardContent() {
-  const { setSocket, organizeContacts, contacts, reqContacts, selectedChat } = useChat(); // Added selectedChat from hook
+  const { setSocket, organizeContacts, contacts, reqContacts, selectedChat } = useChat();
 
   async function fetchOfflineUnseen() {
     const token = localStorage.getItem('token');
@@ -73,7 +72,6 @@ function DashboardContent() {
                 return rank >= 1 && rank <= toRank;
               });
 
-
               payloadToSend = {
                 dirty_slice: cache.dirty_slice,
                 contacts_meta: filteredMeta
@@ -81,7 +79,6 @@ function DashboardContent() {
 
               localStorage.removeItem(LOCAL_CACHE_KEY);
             }
-          } else {
           }
         }
 
@@ -139,14 +136,19 @@ function DashboardContent() {
     };
   }, []);
 
+  // Strict check to verify if a valid chat object with keys is actually active
+  const isChatActive = Boolean(
+    selectedChat && 
+    (selectedChat.id || selectedChat._id || selectedChat.contact_id || Object.keys(selectedChat).length > 0)
+  );
+
   return (
     <div className="dashboard-container">
       <header className="dashboard-topnav">
         <TopNav />
       </header>
 
-      {/* CHANGED: Conditionally append 'has-active-chat' class when selectedChat is open */}
-      <div className={`dashboard-body ${selectedChat ? 'has-active-chat' : ''}`}>
+      <div className={`dashboard-body ${isChatActive ? 'has-active-chat' : ''}`}>
         <aside className="contacts-section">
           <Contacts />
         </aside>

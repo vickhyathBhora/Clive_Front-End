@@ -19,12 +19,14 @@ html, body, #root {
   overflow: hidden;
 }
 
-/* Header Container */
+/* Header Container - Keeps TopNav rendered above full-width mobile layers */
 .dashboard-topnav {
   width: 100%;
   height: 64px;
   flex-shrink: 0;
   background-color: #131314;
+  position: relative;
+  z-index: 100;
 }
 
 /* Main Split View */
@@ -36,7 +38,7 @@ html, body, #root {
   padding: 0 16px 16px 0;
   box-sizing: border-box;
   overflow: hidden;
-  margin-top:20px;
+  margin-top: 20px;
 }
 
 /* Contacts Sidebar */
@@ -60,22 +62,28 @@ html, body, #root {
   flex-direction: column;
   overflow: hidden;
 }
-/* dashboard.css additions */
 
-/* Mobile Layout Overrides */
+/* =========================================================
+   MOBILE RESPONSIVE ADJUSTMENTS
+   ========================================================= */
 @media (max-width: 768px) {
   .dashboard-body {
     padding: 0;
     margin-top: 0;
     position: relative;
+    height: calc(100vh - 64px);
   }
 
+  /* Default state: Contact list is visible */
   .contacts-section {
     min-width: 100%;
     width: 100%;
-    display: block;
+    display: flex !important;
+    flex-direction: column;
+    overflow-y: auto;
   }
 
+  /* Default state: Messages container is hidden */
   .messages-section {
     position: absolute;
     top: 0;
@@ -84,15 +92,15 @@ html, body, #root {
     height: 100%;
     border-radius: 0;
     z-index: 10;
-    display: none; /* Hidden by default on mobile */
+    display: none !important;
   }
 
-  /* Show messages section full-screen when a chat is selected */
+  /* Active state: Hide contacts and reveal chat message panel */
   .dashboard-body.has-active-chat .contacts-section {
-    display: none;
+    display: none !important;
   }
 
   .dashboard-body.has-active-chat .messages-section {
-    display: flex;
+    display: flex !important;
   }
 }
