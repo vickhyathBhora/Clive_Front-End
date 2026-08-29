@@ -368,40 +368,35 @@ export const initInviteSocketListeners = (
     return;
   }
 
- if (typeof setReqContacts === 'function') {
-    let matchedContact = null;
-
-    setReqContacts((prev = []) => {
-      // 1. Find the target object from state
-      matchedContact = prev.find((item) => String(item?.contact_id) === targetId) || null;
-
-      // 2. Return updated pending array without modifying original logic
-      return prev.filter((item) => String(item?.contact_id) !== targetId);
-    });
-console.log(matchedContact);
-    if (matchedContact) {
-      if (typeof setContacts === 'function') {
-        setContacts((prevContacts = []) => {
-          console.log('prevContacts:', prevContacts);
-          const shiftedContacts = (prevContacts || []).map((contact) => {
-            console.log('Current contact in map:', contact);
-            return {
-              ...contact,
-              rank: Number(contact.rank || 0) + 1,
-            };
-          });
-
-          // Prepend the new contact with rank set to 1
-          return [{ ...matchedContact, rank: 1 }, ...shiftedContacts];
-        });
-      }
-      if (response?.type === 'new') {
-        const name = matchedContact?.contact?.name;
-        alert(`🎉 ${name} accepted your contact request!`);
-      }
-    }
+const found = (reqContacts || []).find((item) => String(item?.contact_id) === targetId);
+if (typeof setReqContacts === 'function') {
+    setReqContacts((prev = []) => 
+      prev.filter((item) => String(item?.contact_id) !== targetId)
+    );
   }
+  if (found) {
+    const updatedContact = {
+      ...found,
+      rank: 1,
+      status: 'accepted',
+    };
+  }
+    if (typeof setContacts === 'function') {
+      setContacts((prevContacts = []) => {
+        console.log('prevContacts:', prevContacts);
 
+        const shiftedContacts = (prevContacts || []).map((contact) => ({
+          ...contact,
+          rank: Number(contact.rank || 0) + 1,
+        }));
+
+        return [updatedContact, ...shiftedContacts];
+      });
+    }
+    if (response.type === 'new') {
+      const name = updatedContact?.name || updatedContact?.contact?.name;
+      if (name) alert(`🎉 ${name} accepted your contact request!`);
+    }
 
   // Update LocalStorage (chat_contacts_state)
   const STORAGE_KEY = 'chat_contacts_state';
