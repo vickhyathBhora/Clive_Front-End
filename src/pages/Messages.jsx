@@ -174,6 +174,8 @@ export const Messages = () => {
           fullWidth
           variant="outlined"
           placeholder="Type a message..."
+          multiline              
+          maxRows={4}
           value={textInput}
           onChange={(e) => setTextInput(e.target.value)}
           onKeyDown={handleKeyDown}

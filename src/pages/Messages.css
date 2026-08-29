@@ -151,3 +151,7 @@
     display: inline-block;
   }
 }
+.chat-input-field .MuiInputBase-input {
+  word-break: break-word;
+  white-space: pre-wrap;
+}
