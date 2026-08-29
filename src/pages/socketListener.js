@@ -378,7 +378,7 @@ export const initInviteSocketListeners = (
       // 2. Return updated pending array without modifying original logic
       return prev.filter((item) => String(item?.contact_id) !== targetId);
     });
-
+console.log(matchedContact);
     if (matchedContact) {
       if (typeof setContacts === 'function') {
         setContacts((prevContacts = []) => {
