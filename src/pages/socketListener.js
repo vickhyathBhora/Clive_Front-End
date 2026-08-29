@@ -354,102 +354,101 @@ export const initInviteSocketListeners = (
 
 
   const handleAcceptInviteRes = (response) => {
-    console.log('✅ Accept invite response received:', response);
+  console.log('✅ Accept invite response received:', response);
 
-    if (typeof setIsAccepting === 'function') {
-      setIsAccepting(false);
+  if (typeof setIsAccepting === 'function') {
+    setIsAccepting(false);
+  }
+
+  // 1. FIX: Support both response.contact_id AND response.contact (e.g. { contact: '1' })
+  const targetId = String(response?.contactId || '');
+
+  if (!response?.success || !targetId) {
+    console.warn('⚠️ Missing success status or valid contact ID in payload:', response);
+    return;
+  }
+
+  if (typeof setReqContacts === 'function') {
+    setReqContacts((prev = []) => {
+      // 2. FIX: Check all possible ID properties (item.contact_id, item.id, item.contact?.id)
+      const matchedContact = prev.find((item) => {
+        const itemId = String(item?.contact_id);
+        if (itemId === targetId) {
+      return { ...item, rank: Number(contact.rank || 0) + 1, }; // Return updated object with rank = 1
     }
+  });
 
+      if (matchedContact) {
+        // Add to active contacts list
+        if (typeof setContacts === 'function') {
+          setContacts((prevContacts = []) => {
+            const shiftedContacts = (prevContacts || []).map((contact) => ({
+              ...contact,
+              rank: Number(contact.rank || 0) + 1,
+            }));
+            return [matchedContact, ...shiftedContacts];
+          });
+        }
 
-    if (!response?.success || !response?.contact_id) return;
+        // Trigger alert safely
+        if (response.type === 'new') {
+          const name = matchedContact?.contact?.name;
+          alert(`🎉 ${name} accepted your contact request!`);
+        }
+      }
 
-    const contact_id = response.contact_id;
-
-
-    let matchedContact = null;
-    // 2. Remove from Pending Requests list (reqContacts)
-    if (typeof setReqContacts === 'function') {
-      setReqContacts((prev = []) => {
-        // 1. Find and store the matching contact data
-        matchedContact = prev.find((item) => String(item?.id) === String(contact_id));
-        // 2. Return the filtered array (removing the matched contact)
-        return prev.filter((item) => String(item?.id) !== String(contact_id));
+      // Filter out from pending request array
+      return prev.filter((item) => {
+        const itemId = String(item?.contact_id);
+        return itemId !== targetId;
       });
-    }
-  if (response.type === "new") {
-        alert(`🎉${matchedContact.contact.name}accepted your contact request!`);
+    });
+  }
+
+  // Update LocalStorage (chat_contacts_state)
+  const STORAGE_KEY = 'chat_contacts_state';
+
+  try {
+    const rawMeta = localStorage.getItem(STORAGE_KEY);
+    const parsed = rawMeta ? JSON.parse(rawMeta) : { contacts_meta: [] };
+
+    const updatedList = (parsed.contacts_meta || []).map((item) => {
+      const isTargetContact = String(item.id) === targetId;
+      const currentRank = Number(item.rank);
+
+      if (!isTargetContact && currentRank !== 0) {
+        return {
+          ...item,
+          rank: currentRank + 1,
+        };
       }
 
-      if (typeof setContacts === 'function' && matchedContact) {
-        setContacts((prevContacts) => {
-          // 1. Shift existing contacts down by +1 rank
-          const shiftedContacts = (prevContacts || []).map((contact) => ({
-            ...contact,
-            rank: Number(contact.rank || 0) + 1,
-          }));
-          return [matchedContact, ...shiftedContacts];
-        });
-      }
-    
-      // 3. Update LocalStorage (Chat_contacts_state)
-      const STORAGE_KEY = 'chat_contacts_state';
-
-      try {
-        const rawMeta = localStorage.getItem(STORAGE_KEY);
-        const parsed = rawMeta ? JSON.parse(rawMeta) : { contacts_meta: [] };
-
-        // Shift ALL existing contacts by +1 (unconditionally, even if rank was 0)
-        const updatedList = (parsed.contacts_meta || []).map((item) => {
-          const isTargetContact = String(item.id) === String(contact_id);
-          const currentRank = Number(item.rank);
-
-          // 1. First shift ALL existing ranked contacts (rank !== 0) by +1
-          if (!isTargetContact && currentRank !== 0) {
-            return {
-              ...item,
-              rank: currentRank + 1
-            };
-          }
-
-          // 2. Then explicitly set the target contact's rank to 1
-          if (isTargetContact) {
-            return {
-              ...item,
-              rank: 1
-            };
-          }
-
-          // 3. Keep rank 0 contacts unchanged
-          return item;
-        });
-
-        // Save the updated object back to localStorage
-        const objectToSave = { ...parsed, contacts_meta: updatedList };
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(objectToSave));
-        console.log('✅ LocalStorage updated successfully!');
-        console.log('Updated contacts_meta:', parsed.contacts_meta);
-        const meta = localStorage.getItem(STORAGE_KEY);
-        console.log(meta);
-
-      } catch (err) {
-        console.error('Failed to update local storage Chat_contacts_state:', err);
+      if (isTargetContact) {
+        return {
+          ...item,
+          rank: 1,
+        };
       }
 
-      // 4. Update Accepted Contacts State in App Context
+      return item;
+    });
 
+    const objectToSave = { ...parsed, contacts_meta: updatedList };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(objectToSave));
+    console.log('✅ LocalStorage updated successfully!');
+  } catch (err) {
+    console.error('Failed to update local storage Chat_contacts_state:', err);
+  }
 
-      // 5. Initialize Messages and Open Active Chat
-      if (typeof setMessages === 'function') {
-        setMessages([]);
-      }
+  // Initialize Messages and Open Active Chat
+  if (typeof setMessages === 'function') {
+    setMessages([]);
+  }
 
-      if (typeof setSelectedChat === 'function') {
-        setSelectedChat();
-      }
-    
-  };
-
-
+  if (typeof setSelectedChat === 'function') {
+    setSelectedChat(null);
+  }
+};
 
     // Register listeners
     socket.on('send_invite_res', handleInvite);
