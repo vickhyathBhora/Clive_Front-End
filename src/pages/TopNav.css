@@ -56,6 +56,16 @@
   height: 48px;
   padding-left: 12px;
 }
+/* Logout icon specific hover effect */
+.nav-icon-btn.logout {
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.nav-icon-btn.logout:hover {
+  color: #ff4d4d;
+  background-color: rgba(255, 77, 77, 0.08);
+  transform: scale(1.05);
+}
 
 .google-search-field .MuiOutlinedInput-root fieldset {
   border: none;

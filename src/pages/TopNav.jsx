@@ -226,11 +226,18 @@ export function TopNav() {
           <SearchIcon />
         </IconButton>
 
-        <Tooltip title="Settings">
-          <IconButton className="nav-icon-btn" sx={{ color: '#c4c6d0' }}>
-            <SettingsIcon />
-          </IconButton>
-        </Tooltip>
+       <Tooltip title="Logout">
+  <IconButton 
+    className="nav-icon-btn logout" 
+    onClick={() => {
+      localStorage.clear();
+     // window.location.href = '/'; // Redirects user to login after clearing storage
+    }} 
+    sx={{ color: '#c4c6d0' }}
+  >
+    <LogoutIcon />
+  </IconButton>
+</Tooltip>
         <Avatar
           src={user?.avatarUrl || 'https://api.dicebear.com/7.x/avataaars/svg?seed=currentUser'}
           alt={user?.name || 'Profile'}
