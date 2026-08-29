@@ -136,7 +136,6 @@ function DashboardContent() {
     };
   }, []);
 
-  // Strict check to verify if a valid chat object with keys is actually active
   const isChatActive = Boolean(
     selectedChat && 
     (selectedChat.id || selectedChat._id || selectedChat.contact_id || Object.keys(selectedChat).length > 0)
