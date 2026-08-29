@@ -368,43 +368,40 @@ export const initInviteSocketListeners = (
     return;
   }
 
-  if (typeof setReqContacts === 'function') {
-    setReqContacts((prev = []) => {
-      // 2. FIX: Check all possible ID properties (item.contact_id, item.id, item.contact?.id)
-      const matchedContact = prev.find((item) => {
-        const itemId = String(item?.contact_id);
-        if (itemId === targetId) {
-          console.log(contact);
-      return { ...item, rank: Number(contact.rank || 0) + 1, }; // Return updated object with rank = 1
-    }
-  });
+ if (typeof setReqContacts === 'function') {
+    let matchedContact = null;
 
-      if (matchedContact) {
-        // Add to active contacts list
-        if (typeof setContacts === 'function') {
-          setContacts((prevContacts = []) => {
-            const shiftedContacts = (prevContacts || []).map((contact) => ({
+    setReqContacts((prev = []) => {
+      // 1. Find the target object from state
+      matchedContact = prev.find((item) => String(item?.contact_id) === targetId) || null;
+
+      // 2. Return updated pending array without modifying original logic
+      return prev.filter((item) => String(item?.contact_id) !== targetId);
+    });
+
+    if (matchedContact) {
+      if (typeof setContacts === 'function') {
+        setContacts((prevContacts = []) => {
+          console.log('prevContacts:', prevContacts);
+          const shiftedContacts = (prevContacts || []).map((contact) => {
+            console.log('Current contact in map:', contact);
+            return {
               ...contact,
               rank: Number(contact.rank || 0) + 1,
-            }));
-            return [matchedContact, ...shiftedContacts];
+            };
           });
-        }
 
-        // Trigger alert safely
-        if (response.type === 'new') {
-          const name = matchedContact?.contact?.name;
-          alert(`🎉 ${name} accepted your contact request!`);
-        }
+          // Prepend the new contact with rank set to 1
+          return [{ ...matchedContact, rank: 1 }, ...shiftedContacts];
+        });
       }
-
-      // Filter out from pending request array
-      return prev.filter((item) => {
-        const itemId = String(item?.contact_id);
-        return itemId !== targetId;
-      });
-    });
+      if (response?.type === 'new') {
+        const name = matchedContact?.contact?.name;
+        alert(`🎉 ${name} accepted your contact request!`);
+      }
+    }
   }
+
 
   // Update LocalStorage (chat_contacts_state)
   const STORAGE_KEY = 'chat_contacts_state';
