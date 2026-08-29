@@ -17,7 +17,6 @@ export const Messages = () => {
     isAccepting,
     setIsAccepting,
     isRejecting,
-    setIsRejecting,
   } = useChat();
 
   const messagesEndRef = useRef(null);

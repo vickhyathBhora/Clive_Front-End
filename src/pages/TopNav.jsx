@@ -11,12 +11,11 @@ import { useChat } from './ChatContext';
 import { USER_SEARCH_URL } from '../utils/constant';
 import { apiGet } from '../utils/api';
 import './TopNav.css';
-import { validateEmail } from '../utils/validation';
 
 export function TopNav() {
   const user = JSON.parse(localStorage.getItem('user'));
   const searchTimerRef = useRef(null);
-  const { contacts, reqContacts, socket, setSelectedChat } = useChat();
+  const { contacts, reqContacts, socket, handleSelectContact } = useChat();
 
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredContacts, setFilteredContacts] = useState([]);
@@ -100,7 +99,7 @@ export function TopNav() {
 
     if (searchLevel === 0) {
       console.log('Opening chat with contact:', userItem);
-      setSelectedChat(userItem.contact.id);
+      handleSelectContact(userItem);
     } else if (searchLevel === 1) {
       console.log('Sending connection request to user:', userItem);
       socket.emit('send_invite', userItem.id);

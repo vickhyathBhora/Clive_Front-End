@@ -37,6 +37,34 @@ setReqContacts(required);
     setContacts(remaining);
   };
 
+  const handleSelectContact = (item) => {
+    if (!item) return;
+
+    const contactId = String(item.contact_id);
+
+    // 1. Set Selected Chat
+    setSelectedChat(item);
+    // 2. Clear unseen badge in React state UI
+    if (typeof setContacts === 'function') {
+      setContacts((prevContacts) =>
+        (prevContacts || []).map((c) => {
+          const currentCId = String(c.contact_id);
+          if (currentCId === contactId) {
+            return { ...c, unseen: 0 };
+          }
+          return c;
+        })
+      );
+    }
+
+    // 3. Emit socket event to reset unseen in DB
+    if (socket &&Number(item.rank)!==0) {
+     
+      socket.emit('update_unseen', { contact_id: contactId });
+      console.log(`⚡ [FRONTEND] Emitted update_unseen for contact_id: ${contactId}`);
+    }
+  };
+
 
   useEffect(() => {
     if (!socket) return;
@@ -83,7 +111,8 @@ setReqContacts(required);
         setMessages,
         selectedChat,
         setSelectedChat,
-        organizeContacts
+        organizeContacts,
+        handleSelectContact
       }}
     >
       {children}
