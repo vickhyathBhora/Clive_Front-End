@@ -114,15 +114,17 @@ export function TopNav() {
   return (
     <header className="top-nav-container">
       {/* 1. LEFT: LOGO */}
-      <div className={`top-nav-left ${isMobileSearchOpen ? 'mobile-hidden' : ''}`}>
-        <div className="top-nav-brand">
-          <svg className="google-chat-logo" viewBox="0 0 24 24" width="28" height="28">
-            <path fill="#00AC47" d="M12 2C6.48 2 2 6.48 2 12c0 2.17.69 4.19 1.87 5.84L2 22l4.34-1.74C7.94 21.36 9.89 22 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2z" />
-          </svg>
-          <span className="top-nav-title">ChatLive</span>
-        </div>
+<div className={`top-nav-left ${isMobileSearchOpen ? 'mobile-hidden' : ''}`}>
+      <div className="top-nav-brand">
+        <img 
+          src="/logo.png" 
+          alt="ChatLive Logo" 
+          className="google-chat-logo" 
+          style={{ width: '28px', height: '28px', objectFit: 'contain' }}
+        />
+        <span className="top-nav-title">ChatLive</span>
       </div>
-
+    </div>
       {/* 2. CENTER: SEARCH BAR */}
       <div className={`top-nav-center ${isMobileSearchOpen ? 'mobile-expanded' : ''}`}>
         {/* UI CHANGE: Mobile Back Arrow button to close open search bar */}
