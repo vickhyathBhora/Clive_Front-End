@@ -10,6 +10,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack'; // UI CHANGE: Added b
 import { useChat } from './ChatContext';
 import { USER_SEARCH_URL } from '../utils/constant';
 import { apiGet } from '../utils/api';
+import LogoutIcon from '@mui/icons-material/Logout';
 import './TopNav.css';
 
 export function TopNav() {
