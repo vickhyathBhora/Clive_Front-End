@@ -1,3 +1,4 @@
+// TopNav.jsx
 import React, { useState, useEffect, useRef } from 'react';
 import { TextField, InputAdornment, Tooltip, IconButton, Avatar } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
@@ -5,6 +6,7 @@ import SendIcon from '@mui/icons-material/Send';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import ChatIcon from '@mui/icons-material/Chat';
 import SettingsIcon from '@mui/icons-material/Settings';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack'; // UI CHANGE: Added back icon for mobile search state
 import { useChat } from './ChatContext';
 import { USER_SEARCH_URL } from '../utils/constant';
 import { apiGet } from '../utils/api';
@@ -20,6 +22,9 @@ export function TopNav() {
   const [filteredContacts, setFilteredContacts] = useState([]);
   const [searchLevel, setSearchLevel] = useState(0);
   const [emailError, setEmailError] = useState('');
+  
+  // UI CHANGE: Track mobile overlay state for compact screens
+  const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
 
   const searchServerDatabase = async (queryText) => {
     try {
@@ -31,7 +36,7 @@ export function TopNav() {
       } else {
         setFilteredContacts([]);
         setSearchLevel(2);
-           }
+      }
     } catch (err) {
       console.error('Server search failed:', err);
       setFilteredContacts([]);
@@ -45,39 +50,34 @@ export function TopNav() {
 
     const trimmed = searchText.trim().toLowerCase();
 
-    // Always clear any existing pending timer on every keystroke
     if (searchTimerRef.current) {
       clearTimeout(searchTimerRef.current);
     }
 
-    // Handle empty input
     if (!trimmed) {
       setFilteredContacts([]);
       setSearchLevel(0);
       return;
     }
-    // 💡 FIX 1: Ensure both are arrays before combining
+
     const safeContacts = Array.isArray(contacts) ? contacts : [];
     const safeReqContacts = Array.isArray(reqContacts) ? reqContacts : [];
 
-    // Combine both arrays so search searches across both
     const allContactsToSearch = [...safeContacts, ...safeReqContacts];
 
-    // 💡 FIX 2: Filter across all combined contacts
     const localMatches = allContactsToSearch.filter((item) => {
       const contactObj = item?.contact || {};
       const name = (contactObj.name || item.name || '').toLowerCase();
       const email = (contactObj.email || item.email || '').toLowerCase();
       return name.includes(trimmed) || email.includes(trimmed);
     });
+
     if (localMatches.length > 0) {
       setFilteredContacts(localMatches);
       setSearchLevel(0);
     } else {
-      // Reset contacts while waiting for the timer
       setFilteredContacts([]);
 
-      // Start a 2-second timer before searching the server database
       searchTimerRef.current = setTimeout(async () => {
         setSearchLevel(1);
         await searchServerDatabase(trimmed);
@@ -85,7 +85,6 @@ export function TopNav() {
     }
   };
 
-  // Cleanup timer on component unmount
   useEffect(() => {
     return () => {
       if (searchTimerRef.current) {
@@ -95,7 +94,6 @@ export function TopNav() {
   }, []);
 
   const handleSelectUser = (userItem) => {
-    // Clear any active search timer if user picks an item early
     if (searchTimerRef.current) {
       clearTimeout(searchTimerRef.current);
     }
@@ -111,14 +109,13 @@ export function TopNav() {
     setSearchQuery('');
     setFilteredContacts([]);
     setSearchLevel(0);
+    setIsMobileSearchOpen(false); // UI CHANGE: Close mobile view after selection
   };
-
-
 
   return (
     <header className="top-nav-container">
       {/* 1. LEFT: LOGO */}
-      <div className="top-nav-left">
+      <div className={`top-nav-left ${isMobileSearchOpen ? 'mobile-hidden' : ''}`}>
         <div className="top-nav-brand">
           <svg className="google-chat-logo" viewBox="0 0 24 24" width="28" height="28">
             <path fill="#00AC47" d="M12 2C6.48 2 2 6.48 2 12c0 2.17.69 4.19 1.87 5.84L2 22l4.34-1.74C7.94 21.36 9.89 22 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2z" />
@@ -128,7 +125,18 @@ export function TopNav() {
       </div>
 
       {/* 2. CENTER: SEARCH BAR */}
-      <div className="top-nav-center">
+      <div className={`top-nav-center ${isMobileSearchOpen ? 'mobile-expanded' : ''}`}>
+        {/* UI CHANGE: Mobile Back Arrow button to close open search bar */}
+        {isMobileSearchOpen && (
+          <IconButton 
+            className="mobile-search-back-btn" 
+            onClick={() => setIsMobileSearchOpen(false)}
+            sx={{ color: '#c4c6d0', mr: 1 }}
+          >
+            <ArrowBackIcon />
+          </IconButton>
+        )}
+
         <div className="search-input-wrapper">
           <TextField
             fullWidth
@@ -166,7 +174,6 @@ export function TopNav() {
                     {searchLevel === 0 ? 'Contacts' : 'Global Users'}
                   </span>
                   {filteredContacts.map((item, index) => {
-                    // 💡 FIX 3: Safely extract contact fields for rendering in dropdown
                     const contactObj = item?.contact || item;
                     const targetId = contactObj.id || item.contact_id || index;
                     const name = contactObj.name || 'Unknown User';
@@ -194,23 +201,32 @@ export function TopNav() {
                   })}
                 </div>
               ) : searchLevel === 2 ? (
-  <div className="invite-wrapper">
-    <div className="dropdown-item invite-action" style={{ cursor: 'default' }}>
-      <div className="dropdown-info">
-        <span className="dropdown-name" style={{ color: '#8e918f' }}>
-          No user found
-        </span>
-      </div>
-    </div>
-  </div>
-) : null}
+                <div className="invite-wrapper">
+                  <div className="dropdown-item invite-action" style={{ cursor: 'default' }}>
+                    <div className="dropdown-info">
+                      <span className="dropdown-name" style={{ color: '#8e918f' }}>
+                        No user found
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              ) : null}
             </div>
           )}
         </div>
       </div>
 
       {/* 3. RIGHT: SETTINGS & AVATAR */}
-      <div className="top-nav-right">
+      <div className={`top-nav-right ${isMobileSearchOpen ? 'mobile-hidden' : ''}`}>
+        {/* UI CHANGE: Added standalone mobile toggle search button */}
+        <IconButton 
+          className="mobile-search-trigger-btn"
+          onClick={() => setIsMobileSearchOpen(true)}
+          sx={{ color: '#c4c6d0' }}
+        >
+          <SearchIcon />
+        </IconButton>
+
         <Tooltip title="Settings">
           <IconButton className="nav-icon-btn" sx={{ color: '#c4c6d0' }}>
             <SettingsIcon />

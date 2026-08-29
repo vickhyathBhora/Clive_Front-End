@@ -39,6 +39,7 @@
   max-width: 680px;
   margin: 0 16px;
   display: flex;
+  align-items: center;
   justify-content: center;
 }
 
@@ -87,6 +88,14 @@
   height: 32px;
   cursor: pointer;
   border: 1px solid #333538;
+}
+
+.mobile-search-trigger-btn {
+  display: none !important;
+}
+
+.mobile-search-back-btn {
+  display: none !important;
 }
 
 /* Floating Search Dropdown */
@@ -166,4 +175,42 @@
 
 .invite-action:hover {
   background-color: rgba(168, 199, 250, 0.16);
+}
+
+/* =========================================================
+   MOBILE RESPONSIVE ADJUSTMENTS
+   ========================================================= */
+@media (max-width: 768px) {
+  .top-nav-left {
+    min-width: auto;
+  }
+
+  .top-nav-right {
+    min-width: auto;
+    gap: 4px;
+  }
+
+  .top-nav-center {
+    display: none;
+    margin: 0;
+  }
+
+  .mobile-search-trigger-btn {
+    display: inline-flex !important;
+  }
+
+  /* When mobile search mode is active */
+  .mobile-hidden {
+    display: none !important;
+  }
+
+  .top-nav-center.mobile-expanded {
+    display: flex !important;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .mobile-search-back-btn {
+    display: inline-flex !important;
+  }
 }
