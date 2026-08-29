@@ -84,7 +84,7 @@ export const initMessagesSocketListeners = (socket, setMessages, setContacts, se
     if (setMessages) {
       setMessages((prevMessages) => {
         const updated = [...prevMessages, newMessage];
-        if (updated.length > 10) {
+        if (updated.length > 20) {
           updated.shift(); // Remove oldest message
         }
         return updated;
