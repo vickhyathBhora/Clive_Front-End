@@ -1,24 +1,28 @@
-/* Container & Scroll Handling */
+/* Ensure document allows natural vertical scrolling */
 html, body {
   margin: 0;
   padding: 0;
   width: 100%;
-  background-color: #0b0f17;
+  min-height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto !important; /* Forces vertical scrolling */
 }
 
+/* Base Wrapper */
 .portfolio-hero-wrapper {
   width: 100%;
+  min-height: 100vh;
+  height: auto; /* Lets content dictate height naturally */
   background-color: #0b0f17;
   background-image: 
     radial-gradient(at 0% 0%, rgba(0, 172, 71, 0.12) 0px, transparent 50%),
     radial-gradient(at 100% 100%, rgba(0, 132, 255, 0.12) 0px, transparent 50%);
   color: #e3e2e6;
   position: relative;
-  overflow-x: hidden;
   box-sizing: border-box;
 }
 
-/* Background Ambient Glows */
+/* Background Glows */
 .hero-glow {
   position: absolute;
   border-radius: 50%;
@@ -44,16 +48,15 @@ html, body {
   right: -150px;
 }
 
-/* Container Spacing & Layout */
+/* Container Spacing */
 .portfolio-hero-wrapper .portfolio-container {
   position: relative;
   z-index: 1;
   padding-top: 32px;
- padding-bottom: 120px;
+  padding-bottom: 160px; /* Generous bottom spacing for mobile UI bars */
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   margin: 0 auto;
 }
 
@@ -125,7 +128,7 @@ html, body {
   box-shadow: 0 0 10px #22c55e;
 }
 
-/* Typography & Gradient Clip */
+/* Typography */
 .portfolio-card .hero-heading {
   font-size: 2.75rem;
   font-weight: 800;
@@ -199,7 +202,6 @@ html, body {
   flex-direction: column;
   align-items: flex-start;
   gap: 12px;
-  height: 100%;
   box-sizing: border-box;
   transition: all 0.25s ease;
 }
@@ -239,23 +241,24 @@ html, body {
   margin: 0;
 }
 
-/* Mobile Responsiveness & Fixes */
+/* Mobile Breakpoint Adjustments */
 @media (max-width: 600px) {
   .portfolio-hero-wrapper .portfolio-container {
-    padding-top: 20px;
-    padding-bottom: 140px;
+    padding-top: 16px;
+    padding-bottom: 200px; /* Provides extra scroll distance to expose 4th card */
   }
 
-  .portfolio-card {
-    padding: 28px 16px;
+  .portfolio-hero-wrapper .portfolio-card {
+    padding: 24px 16px;
+    gap: 16px;
   }
 
   .portfolio-card .hero-heading {
-    font-size: 1.85rem;
+    font-size: 1.75rem;
   }
 
   .glow-1, .glow-2 {
-    width: 300px;
-    height: 300px;
+    width: 250px;
+    height: 250px;
   }
 }
