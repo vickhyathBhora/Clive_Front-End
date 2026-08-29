@@ -232,7 +232,7 @@ export function TopNav() {
     className="nav-icon-btn logout" 
     onClick={() => {
       localStorage.clear();
-     // window.location.href = '/'; // Redirects user to login after clearing storage
+      window.location.href = '/Portfolio'; // Redirects user to login after clearing storage
     }} 
     sx={{ color: '#c4c6d0' }}
   >
