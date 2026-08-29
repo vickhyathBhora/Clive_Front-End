@@ -1,8 +1,11 @@
-/* Container and Scroll Handling */
+/* Page Background & Scroll Wrapper */
 .portfolio-hero-wrapper {
   min-height: 100vh;
   width: 100vw;
   background-color: #0b0f17;
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(0, 172, 71, 0.12) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(0, 132, 255, 0.12) 0px, transparent 50%);
   color: #e3e2e6;
   position: relative;
   overflow-y: auto;
@@ -10,22 +13,22 @@
   box-sizing: border-box;
 }
 
-/* Background Ambient Glows */
+/* Ambient Ambient Glows */
 .hero-glow {
   position: absolute;
   border-radius: 50%;
   filter: blur(140px);
-  opacity: 0.2;
+  opacity: 0.25;
   pointer-events: none;
   z-index: 0;
 }
 
 .glow-1 {
-  width: 450px;
-  height: 450px;
+  width: 500px;
+  height: 500px;
   background: #00ac47;
-  top: -120px;
-  left: -100px;
+  top: -150px;
+  left: -150px;
 }
 
 .glow-2 {
@@ -33,14 +36,14 @@
   height: 500px;
   background: #0084ff;
   bottom: -150px;
-  right: -100px;
+  right: -150px;
 }
 
-/* Centered Main Layout */
+/* Container */
 .portfolio-container {
   position: relative;
   z-index: 1;
-  padding-top: 48px;
+  padding-top: 32px;
   padding-bottom: 64px;
   display: flex !important;
   flex-direction: column !important;
@@ -49,57 +52,63 @@
   margin: 0 auto !important;
 }
 
-/* Header */
+/* Glass Header Bar */
 .portfolio-header {
   width: 100%;
   display: flex;
   justify-content: center;
-  margin-bottom: 32px;
+  margin-bottom: 36px;
 }
 
 .portfolio-brand {
   display: flex;
   align-items: center;
   gap: 12px;
+  padding: 8px 24px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 40px;
+  backdrop-filter: blur(12px);
 }
 
 .portfolio-title {
-  font-size: 1.6rem;
+  font-size: 1.4rem;
   font-weight: 700;
   color: #ffffff;
-  letter-spacing: -0.5px;
+  letter-spacing: -0.3px;
 }
 
 /* Hero Section Card */
 .portfolio-card {
-  background: rgba(22, 27, 38, 0.6);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  padding: 48px 36px;
+  background: rgba(18, 24, 38, 0.65);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  padding: 48px 40px;
   border-radius: 28px;
   width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: 20px;
-  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.5);
+  gap: 22px;
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.45);
   box-sizing: border-box;
 }
 
-/* Status Badge */
+/* Status Pill */
 .status-badge {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background-color: rgba(0, 172, 71, 0.1);
-  border: 1px solid rgba(0, 172, 71, 0.25);
+  background-color: rgba(0, 172, 71, 0.12);
+  border: 1px solid rgba(0, 172, 71, 0.3);
   color: #34d399;
   padding: 6px 16px;
   border-radius: 20px;
-  font-size: 0.85rem;
+  font-size: 0.825rem;
   font-weight: 600;
+  letter-spacing: 0.2px;
 }
 
 .live-dot {
@@ -110,12 +119,13 @@
   box-shadow: 0 0 10px #22c55e;
 }
 
-/* Headings & Text Clipping Fix */
+/* Typography & Text Clip */
 .hero-heading {
-  font-size: 2.6rem !important;
+  font-size: 2.75rem !important;
   font-weight: 800 !important;
-  line-height: 1.25 !important;
+  line-height: 1.2 !important;
   color: #ffffff;
+  letter-spacing: -0.5px;
 }
 
 .gradient-text {
@@ -134,14 +144,9 @@
   line-height: 1.6 !important;
 }
 
-.portfolio-alert {
-  width: 100%;
-  border-radius: 12px !important;
-}
-
-/* Call to Action Button */
+/* Primary Google CTA Button */
 .hero-cta-wrapper {
-  margin-top: 12px;
+  margin-top: 10px;
   width: 100%;
   display: flex;
   justify-content: center;
@@ -149,30 +154,31 @@
 
 .portfolio-btn.primary-cta {
   background: linear-gradient(135deg, #0084ff 0%, #0056b3 100%) !important;
-  padding: 14px 36px !important;
-  font-size: 1rem !important;
+  padding: 14px 40px !important;
+  font-size: 1.05rem !important;
   font-weight: 600 !important;
   border-radius: 30px !important;
   text-transform: none !important;
   color: #ffffff !important;
-  box-shadow: 0 8px 24px rgba(0, 132, 255, 0.35) !important;
+  box-shadow: 0 10px 30px rgba(0, 132, 255, 0.4) !important;
   transition: all 0.25s ease !important;
 }
 
 .portfolio-btn.primary-cta:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 32px rgba(0, 132, 255, 0.5) !important;
+  transform: translateY(-3px);
+  box-shadow: 0 14px 36px rgba(0, 132, 255, 0.6) !important;
 }
 
-/* Features Grid */
+/* Features Grid & Hover Cards */
 .features-grid {
   margin-top: 28px !important;
   width: 100% !important;
 }
 
 .feature-card {
-  background: rgba(22, 27, 38, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: rgba(18, 24, 38, 0.45);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.07);
   padding: 24px;
   border-radius: 20px;
   display: flex;
@@ -185,10 +191,10 @@
 }
 
 .feature-card:hover {
-  background: rgba(22, 27, 38, 0.7);
-  border-color: rgba(255, 255, 255, 0.12);
+  background: rgba(24, 32, 48, 0.7);
+  border-color: rgba(0, 132, 255, 0.3);
   transform: translateY(-4px);
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.35);
 }
 
 .feature-icon-box {
@@ -200,10 +206,10 @@
   justify-content: center;
 }
 
-.feature-icon-box.blue { background: rgba(0, 132, 255, 0.12); color: #60a5fa; }
-.feature-icon-box.green { background: rgba(0, 172, 71, 0.12); color: #34d399; }
-.feature-icon-box.purple { background: rgba(168, 85, 247, 0.12); color: #c084fc; }
-.feature-icon-box.orange { background: rgba(249, 115, 22, 0.12); color: #fb923c; }
+.feature-icon-box.blue { background: rgba(0, 132, 255, 0.15); color: #60a5fa; }
+.feature-icon-box.green { background: rgba(0, 172, 71, 0.15); color: #34d399; }
+.feature-icon-box.purple { background: rgba(168, 85, 247, 0.15); color: #c084fc; }
+.feature-icon-box.orange { background: rgba(249, 115, 22, 0.15); color: #fb923c; }
 
 .feature-title {
   color: #ffffff !important;
@@ -217,10 +223,10 @@
   line-height: 1.5 !important;
 }
 
-/* Responsive Scaling */
+/* Mobile Responsiveness */
 @media (max-width: 600px) {
   .hero-heading {
-    font-size: 1.9rem !important;
+    font-size: 2rem !important;
   }
 
   .portfolio-card {
@@ -228,7 +234,7 @@
   }
 
   .portfolio-container {
-    padding-top: 24px;
+    padding-top: 20px;
     padding-bottom: 40px;
   }
 }
