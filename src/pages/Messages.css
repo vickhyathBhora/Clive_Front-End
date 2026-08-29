@@ -156,3 +156,28 @@
   word-break: break-word;
   white-space: pre-wrap;
 }
+
+/* Add to Messages.css */
+
+.chat-input-wrapper {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 16px;
+}
+
+.chat-input-field {
+  width: 100%;
+}
+
+.chat-input-field .MuiInputBase-root {
+  align-items: flex-end;
+  padding: 8px 14px;
+}
+
+/* Forces long continuous text without spaces to break correctly */
+.chat-input-field textarea {
+  word-break: break-all !important;
+  overflow-wrap: anywhere !important;
+  white-space: pre-wrap !important;
+  resize: none;
+}
