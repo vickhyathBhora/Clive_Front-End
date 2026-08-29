@@ -12,6 +12,7 @@
   padding: 16px 20px;
   background-color: #1e1e1e;
   border-bottom: 1px solid #2a2a2a;
+  margin-top:20px;
   color: #ffffff;
 }
 
@@ -81,7 +82,7 @@
 
 /* Bottom Input Container fixed height */
 .chat-input-wrapper {
-  padding: 10px 16px;
+  padding: 20px 16px;
   background-color: #1e1e1e;
   border-top: 1px solid #2a2a2a;
   display: flex;
