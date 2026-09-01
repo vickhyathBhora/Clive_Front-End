@@ -59,7 +59,7 @@ const handleSubmit = async (e) => {
       const currentUser = JSON.parse(localStorage.getItem('user')) || {};
 
       // 2. Update local storage with updated user name
-      const updatedUser = { ...currentUser, name: newName };
+      const updatedUser = { ...currentUser, name: newName.trim() };
       localStorage.setItem('user', JSON.stringify(updatedUser));
 
       // 3. Close modal & reset input state
