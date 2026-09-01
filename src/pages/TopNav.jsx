@@ -38,11 +38,30 @@ const [isSubmitting, setIsSubmitting] = useState(false);
   };
 
 const handleSubmit = async (e) => {
-  e.preventDefault();
+ e.preventDefault();
+  const trimmedName = newName.trim();
+
+  // 1. Check if name hasn't changed
+  if (user?.name === trimmedName) {
+    alert('Please enter a new name to update.');
+    return;
+  }
+
+  // 2. Validate length (up to 20 characters)
+  if (trimmedName.length > 20) {
+    alert('Name cannot exceed 20 characters.');
+    return;
+  }
+
+  // 3. Validate allowed characters: letters, numbers, spaces, _ and -
+  const validNameRegex = /^[a-zA-Z0-9 _-]+$/;
+  if (!validNameRegex.test(trimmedName)) {
+    alert('Only letters, numbers, spaces, underscores (_), and hyphens (-) are allowed.');
+    return;
+  }
 
   const token = localStorage.getItem('token');
-  if (!newName.trim()) return;
-
+  setIsSubmitting(true);
   try {
     // Make API call sending the new name and authorization header
     const response = await fetch(USERNAME_UPDATE, {
