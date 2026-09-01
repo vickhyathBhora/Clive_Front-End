@@ -336,7 +336,11 @@ const handleSubmit = async (e) => {
           <IconButton
             className="nav-icon-btn logout"
             onClick={() => {
-              localStorage.clear();
+                       if (socket) {
+      socket.disconnect();
+    }
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
               window.location.href = '/Portfolio';
             }}
             sx={{ color: '#c4c6d0' }}
