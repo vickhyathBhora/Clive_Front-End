@@ -5,12 +5,11 @@ import SearchIcon from '@mui/icons-material/Search';
 import SendIcon from '@mui/icons-material/Send';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import ChatIcon from '@mui/icons-material/Chat';
-import SettingsIcon from '@mui/icons-material/Settings';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack'; // UI CHANGE: Added back icon for mobile search state
-import { useChat } from './ChatContext';
-import { USER_SEARCH_URL } from '../utils/constant';
-import { apiGet } from '../utils/api';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import LogoutIcon from '@mui/icons-material/Logout';
+import { useChat } from './ChatContext';
+import { USER_SEARCH_URL,USERNAME_UPDATE } from '../utils/constant';
+import { apiGet } from '../utils/api';
 import './TopNav.css';
 
 export function TopNav() {
@@ -21,10 +20,58 @@ export function TopNav() {
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredContacts, setFilteredContacts] = useState([]);
   const [searchLevel, setSearchLevel] = useState(0);
-  const [emailError, setEmailError] = useState('');
-  
-  // UI CHANGE: Track mobile overlay state for compact screens
+
+  // Mobile search state
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
+
+  // Modal State
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [newName, setNewName] = useState(user?.name || '');
+
+  const handleOpenModal = () => {
+    setNewName(user?.name || '');
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  const token = localStorage.getItem('token');
+  if (!newName.trim()) return;
+
+  try {
+    // Make API call sending the new name and authorization header
+    const response = await fetch(USERNAME_UPDATE, {
+      method: 'PUT', // adjust endpoint path and HTTP method according to your backend route
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({ name: newName })
+    });
+
+    if (response.ok) {
+      // 1. Get current user object from localStorage
+      const currentUser = JSON.parse(localStorage.getItem('user')) || {};
+
+      // 2. Update local storage with updated user name
+      const updatedUser = { ...currentUser, name: newName };
+      localStorage.setItem('user', JSON.stringify(updatedUser));
+
+      // 3. Close modal & reset input state
+      setIsModalOpen(false);
+      setNewName('');
+    } else {
+      console.error('Failed to update user name');
+    }
+  } catch (error) {
+    console.error('Error updating user name:', error);
+  }
+};
 
   const searchServerDatabase = async (queryText) => {
     try {
@@ -107,29 +154,29 @@ export function TopNav() {
     setSearchQuery('');
     setFilteredContacts([]);
     setSearchLevel(0);
-    setIsMobileSearchOpen(false); // UI CHANGE: Close mobile view after selection
+    setIsMobileSearchOpen(false);
   };
 
   return (
     <header className="top-nav-container">
       {/* 1. LEFT: LOGO */}
-<div className={`top-nav-left ${isMobileSearchOpen ? 'mobile-hidden' : ''}`}>
-      <div className="top-nav-brand">
-        <img 
-         src="/logo.png"
-          alt="ChatLive Logo" 
-          className="google-chat-logo" 
-          style={{ width: '28px', height: '28px', objectFit: 'contain' }}
-        />
-        <span className="top-nav-title">ChatLive</span>
+      <div className={`top-nav-left ${isMobileSearchOpen ? 'mobile-hidden' : ''}`}>
+        <div className="top-nav-brand">
+          <img
+            src="/logo.png"
+            alt="ChatLive Logo"
+            className="google-chat-logo"
+            style={{ width: '28px', height: '28px', objectFit: 'contain' }}
+          />
+          <span className="top-nav-title">ChatLive</span>
+        </div>
       </div>
-    </div>
+
       {/* 2. CENTER: SEARCH BAR */}
       <div className={`top-nav-center ${isMobileSearchOpen ? 'mobile-expanded' : ''}`}>
-        {/* UI CHANGE: Mobile Back Arrow button to close open search bar */}
         {isMobileSearchOpen && (
-          <IconButton 
-            className="mobile-search-back-btn" 
+          <IconButton
+            className="mobile-search-back-btn"
             onClick={() => setIsMobileSearchOpen(false)}
             sx={{ color: '#c4c6d0', mr: 1 }}
           >
@@ -154,7 +201,7 @@ export function TopNav() {
                 ),
                 endAdornment: searchQuery.trim() ? (
                   <InputAdornment position="end">
-                    <Tooltip title={searchLevel === 2 ? "Send Email Invite" : "Action"}>
+                    <Tooltip title={searchLevel === 2 ? 'Send Email Invite' : 'Action'}>
                       <IconButton size="small">
                         <SendIcon sx={{ color: '#a8c7fa', fontSize: 18 }} />
                       </IconButton>
@@ -218,8 +265,7 @@ export function TopNav() {
 
       {/* 3. RIGHT: SETTINGS & AVATAR */}
       <div className={`top-nav-right ${isMobileSearchOpen ? 'mobile-hidden' : ''}`}>
-        {/* UI CHANGE: Added standalone mobile toggle search button */}
-        <IconButton 
+        <IconButton
           className="mobile-search-trigger-btn"
           onClick={() => setIsMobileSearchOpen(true)}
           sx={{ color: '#c4c6d0' }}
@@ -227,27 +273,68 @@ export function TopNav() {
           <SearchIcon />
         </IconButton>
 
-       <Tooltip title="Logout">
-  <IconButton 
-    className="nav-icon-btn logout" 
-    onClick={() => {
-      localStorage.clear();
-      window.location.href = '/Portfolio'; // Redirects user to login after clearing storage
-    }} 
-    sx={{ color: '#c4c6d0' }}
-  >
-    <LogoutIcon />
-  </IconButton>
-</Tooltip>
+        <Tooltip title="Logout">
+          <IconButton
+            className="nav-icon-btn logout"
+            onClick={() => {
+              localStorage.clear();
+              window.location.href = '/Portfolio';
+            }}
+            sx={{ color: '#c4c6d0' }}
+          >
+            <LogoutIcon />
+          </IconButton>
+        </Tooltip>
+
         <Avatar
+          onClick={handleOpenModal}
           src={user?.avatarUrl || 'https://api.dicebear.com/7.x/avataaars/svg?seed=currentUser'}
           alt={user?.name || 'Profile'}
-          className="top-nav-avatar"
+          className="top-nav-avatar clickable-avatar"
           slotProps={{
             img: { referrerPolicy: 'no-referrer' }
           }}
         />
       </div>
+
+      {/* 4. MODAL OVERLAY */}
+      {isModalOpen && (
+        <div className="profile-modal-overlay">
+          <div className="profile-modal-card">
+            <h2 className="profile-modal-title">Update Name</h2>
+
+            <form onSubmit={handleSubmit} className="profile-modal-form">
+              <div className="profile-input-group">
+                <label className="profile-input-label">Name</label>
+                <input
+                  type="text"
+                  value={newName}
+                  onChange={(e) => setNewName(e.target.value)}
+                  placeholder="Enter new name"
+                  className="profile-modal-input"
+                  autoFocus
+                />
+              </div>
+
+              <div className="profile-modal-actions">
+                <button
+                  type="button"
+                  onClick={handleCloseModal}
+                  className="profile-btn profile-btn-cancel"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="profile-btn profile-btn-submit"
+                >
+                  Submit
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </header>
   );
 }
