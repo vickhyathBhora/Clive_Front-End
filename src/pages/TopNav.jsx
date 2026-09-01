@@ -20,7 +20,7 @@ export function TopNav() {
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredContacts, setFilteredContacts] = useState([]);
   const [searchLevel, setSearchLevel] = useState(0);
-
+const [isSubmitting, setIsSubmitting] = useState(false);
   // Mobile search state
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
 
@@ -70,6 +70,8 @@ const handleSubmit = async (e) => {
     }
   } catch (error) {
     console.error('Error updating user name:', error);
+  }finally {
+    setIsSubmitting(false); // Re-enable button regardless of success or failure
   }
 };
 
@@ -324,12 +326,13 @@ const handleSubmit = async (e) => {
                 >
                   Cancel
                 </button>
-                <button
-                  type="submit"
-                  className="profile-btn profile-btn-submit"
-                >
-                  Submit
-                </button>
+             <button
+  type="submit"
+  disabled={isSubmitting || !newName.trim()}
+  className={`profile-btn profile-btn-submit ${isSubmitting ? 'disabled' : ''}`}
+>
+  {isSubmitting ? 'Updating...' : 'Submit'}
+</button>
               </div>
             </form>
           </div>
