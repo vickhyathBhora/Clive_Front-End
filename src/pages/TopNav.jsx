@@ -51,7 +51,7 @@ const handleSubmit = async (e) => {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`
       },
-      body: JSON.stringify({ name: newName })
+      body: JSON.stringify({ name: newName.trim() })
     });
 
     if (response.ok) {
