@@ -23,6 +23,7 @@ export function TopNav() {
 const [isSubmitting, setIsSubmitting] = useState(false);
   // Mobile search state
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
+  const [inviteTarget, setInviteTarget] = useState(null);
 
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -169,7 +170,7 @@ const handleSubmit = async (e) => {
     if (searchLevel === 0) {
       handleSelectContact(userItem);
     } else if (searchLevel === 1) {
-      socket.emit('send_invite', userItem.id);
+      setInviteTarget(userItem);
     }
 
     setSearchQuery('');
@@ -283,7 +284,44 @@ const handleSubmit = async (e) => {
           )}
         </div>
       </div>
+{inviteTarget && (
+  <div className="invite-modal-overlay">
+    <div className="invite-modal-card">
+      <div className="invite-avatar-container">
+        <img 
+          src={inviteTarget.avatar_url || '/default-avatar.png'} 
+          alt={inviteTarget.name} 
+          className="invite-avatar"
+        />
+      </div>
+      
+      <div className="invite-details">
+        <h4>{inviteTarget.name}</h4>
+        <p>{inviteTarget.email}</p>
+      </div>
 
+      <div className="invite-modal-actions">
+        <button 
+          type="button" 
+          className="invite-btn invite-btn-cancel"
+          onClick={() => setInviteTarget(null)}
+        >
+          Cancel
+        </button>
+        <button 
+          type="button" 
+          className="invite-btn invite-btn-send"
+          onClick={() => {
+            socket.emit('send_invite', inviteTarget.id);
+            setInviteTarget(null);
+          }}
+        >
+          Send Invite
+        </button>
+      </div>
+    </div>
+  </div>
+)}
       {/* 3. RIGHT: SETTINGS & AVATAR */}
       <div className={`top-nav-right ${isMobileSearchOpen ? 'mobile-hidden' : ''}`}>
         <IconButton
