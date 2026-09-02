@@ -55,7 +55,7 @@ export function Portfolio() {
         <div className="sys-logo">
           <span className="logo-badge">VB</span>
           <span className="logo-title">Vickhyath Bhora</span>
-          <span className="role-tag">Full-Stack Engineer</span>
+          <span className="role-tag desktop-only">Full-Stack Engineer</span>
         </div>
         <div className="sys-metrics">
           <div className="metric-item">
