@@ -12,7 +12,7 @@ import { useNavigate } from 'react-router-dom';
 import { apiPost } from '../utils/api';
 import { GOOGLE_AUTH_URL } from '../utils/constant';
 import profileImg from '../assets/profile.jpeg';
-import './Portfolio.css';
+import './PortFolio.css';
 
 export function Portfolio() {
   const navigate = useNavigate();
