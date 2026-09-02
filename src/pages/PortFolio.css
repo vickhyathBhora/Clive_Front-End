@@ -138,6 +138,7 @@
   background-color: var(--accent-green);
   border-radius: 50%;
   box-shadow: 0 0 10px var(--accent-green);
+      margin-left: 10px;
 }
 
 /* HERO SECTION */
