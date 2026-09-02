@@ -60,7 +60,8 @@ export function Portfolio() {
         <div className="sys-metrics">
           <div className="metric-item">
             <span className="status-indicator active"></span>
-            <span className="metric-label">System Status: 100% Operational</span>
+            <span className="metric-label desktop-only">System Status:</span>
+            <span className="metric-val">100% Operational</span>
           </div>
           <div className="metric-item desktop-only">
             <span className="metric-label">Stack:</span>
