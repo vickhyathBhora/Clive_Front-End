@@ -4,6 +4,7 @@ import GoogleIcon from '@mui/icons-material/Google';
 import FlashOnIcon from '@mui/icons-material/FlashOn';
 import StorageIcon from '@mui/icons-material/Storage';
 import MemoryIcon from '@mui/icons-material/Memory';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import TerminalIcon from '@mui/icons-material/Terminal';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CodeIcon from '@mui/icons-material/Code';
@@ -13,7 +14,6 @@ import { apiPost } from '../utils/api';
 import { GOOGLE_AUTH_URL } from '../utils/constant';
 import profileImg from '../assets/profile.jpeg';
 import './PortFolio.css';
-
 export function Portfolio() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -64,8 +64,8 @@ export function Portfolio() {
             <span className="metric-val">100% Operational</span>
           </div>
           <div className="metric-item desktop-only">
-            <span className="metric-label">Stack:</span>
-            <span className="metric-val">React / Node.js / Redis / Postgres</span>
+            <span className="metric-label">Architecture:</span>
+            <span className="metric-val">Distributed Real-Time Engine</span>
           </div>
         </div>
       </nav>
@@ -87,7 +87,7 @@ export function Portfolio() {
             </div>
 
             <h1 className="hero-title">
-              Engineered for High Concurrency & <span className="highlight-text">Zero-Latency Sync</span>
+             <span className="highlight-text">ChatLive</span> - Engineered for High Concurrency & <span className="highlight-text">Real-Time Messaging</span>
             </h1>
 
             <p className="hero-description">
@@ -114,7 +114,13 @@ export function Portfolio() {
                 className="btn-google-auth"
                 startIcon={!loading && <GoogleIcon />}
               >
-                {loading ? <CircularProgress size={22} color="inherit" /> : "Launch ChatLive Demo (Google Login)"}
+             {loading ? (
+  <CircularProgress size={22} color="inherit" />
+) : (
+  <>
+    ChatLive <ArrowForwardIcon sx={{ fontSize: '1.5rem', verticalAlign: 'middle', ml: 0.5 }} />
+  </>
+)}
               </Button>
             </div>
           </div>
