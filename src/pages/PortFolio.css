@@ -133,7 +133,7 @@
 }
 
 .status-indicator.active {
-  width: 8px;
+  width: 15px;
   height: 8px;
   background-color: var(--accent-green);
   border-radius: 50%;
