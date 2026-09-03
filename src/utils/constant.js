@@ -64,7 +64,7 @@ export function rearrangeRanks(offlineContacts) {
   // Filter contactsMeta: remove duplicate IDs and skip rank === 0 entries
   const validMeta = contactsMeta.filter((contact) => {
     const contactId = String(contact.id);
-    return !offlineIds.has(contactId) && Number(contact.rank) !== 0;
+    return !offlineIds.has(contactId) && Number(contact.rank) !== 0&& Number(contact.rank) !== -1;
   });
 
   // Sort remaining meta entries by their existing rank ascending
