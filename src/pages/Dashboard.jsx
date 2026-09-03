@@ -116,8 +116,8 @@ function DashboardContent() {
           sync_pending: false,
           dirty_slice: { from_rank: 1, to_rank: 0 },
           contacts_meta: contacts.map((c) => ({
-            id: String(c.contact_id || c.id),
-            rank: Number(c.rank || 0)
+            id: String(c.contact_id),
+            rank: Number(c.rank) === -1 ? 0 : Number(c.rank || 0)
           }))
         };
 
