@@ -2,7 +2,6 @@
 import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
 
 import { initContactsSocketListeners, initMessagesSocketListeners, initInviteSocketListeners } from './socketListener'
-
 const ChatContext = createContext(null);
 
 export const ChatProvider = ({ children } = {}) => {
@@ -16,27 +15,6 @@ export const ChatProvider = ({ children } = {}) => {
   const [reqContacts, setReqContacts] = useState([]);
 
   // 2. Function to organize contacts based on rank
-  const organizeContacts = (allContacts) => {
-    const newReqsCount = allContacts.filter((contact) => Number(contact.rank) === -1).length;
-
-if (newReqsCount > 0) {
-  alert(`You have ${newReqsCount} number of new reqs`);
-}
-const processedContacts = allContacts.map((contact) => ({
-  ...contact,
-  rank: Number(contact.rank) === -1 ? 0 : contact.rank
-}));
-
-const required = processedContacts
-  .filter((contact) => Number(contact.rank) === 0)
-  .sort((a, b) => new Date(b.time) - new Date(a.time));
-
-const remaining = processedContacts.filter((contact) => Number(contact.rank) !== 0);
-
-setReqContacts(required);
-    setContacts(remaining);
-  };
-
   const handleSelectContact = (item) => {
     if (!item) return;
 
@@ -63,7 +41,6 @@ setReqContacts(required);
       socket.emit('update_unseen', { contact_id: contactId });
     }
   };
-
 
   useEffect(() => {
     if (!socket) return;
@@ -110,7 +87,6 @@ setReqContacts(required);
         setMessages,
         selectedChat,
         setSelectedChat,
-        organizeContacts,
         handleSelectContact
       }}
     >

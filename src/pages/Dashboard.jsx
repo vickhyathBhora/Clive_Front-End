@@ -3,12 +3,13 @@ import Contacts from './Contacts';
 import Messages from './Messages';
 import { TopNav } from './TopNav';
 import './Dashboard.css';
-import { ChatProvider, useChat } from './ChatContext';
+import { ChatProvider, useChat} from './ChatContext';
 import { initSocket } from './socket';
-import { rearrangeRanks } from '../utils/constant';
+import { organizeContacts, rearrangeRanks } from 'vickycliveimpfunsquarys';
 
 function DashboardContent() {
-  const { setSocket, organizeContacts, contacts, reqContacts, selectedChat } = useChat();
+  const { setSocket, selectedChat ,setReqContacts,
+setContacts} = useChat();
 
   async function fetchOfflineUnseen() {
     const token = localStorage.getItem('token');
@@ -110,8 +111,9 @@ function DashboardContent() {
     socket.on('initial_data', (response) => {
       if (response?.res) {
         const contacts = response.res;
-        organizeContacts(contacts);
-
+        const c= organizeContacts(contacts);
+setReqContacts(c.required);
+setContacts(c.remaining);
         const freshCache = {
           sync_pending: false,
           dirty_slice: { from_rank: 1, to_rank: 0 },
