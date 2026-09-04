@@ -292,6 +292,7 @@ export const initInviteSocketListeners = (
 ) => {
   if (!socket) return () => { };
 
+const STORAGE_KEY = 'chat_contacts_state';
   const handleInvite = (response) => {
     if (!response?.success) {
       console.error('⚠️ Invite failed:', response?.message);
@@ -305,6 +306,31 @@ export const initInviteSocketListeners = (
     if (response?.contact) {
       setReqContacts?.((prev) => [response.contact, ...(prev || [])]);
     }
+try {
+      const rawMeta = localStorage.getItem(STORAGE_KEY);
+      const parsed = rawMeta ? JSON.parse(rawMeta) : { contacts_meta: [] };
+      let currentList = parsed.contacts_meta || [];
+
+      // Extract details from response contact object
+      const newContactId = String(response.contact.contact_id);
+      const newRank = response.contact.rank ?? 0;
+
+      // Check if contact_id already exists in metadata
+      const exists = currentList.some((item) => String(item.id) === newContactId);
+
+      if (!exists) {
+        currentList.push({
+          id: newContactId,
+          rank: newRank,
+        });
+
+        const objectToSave = { ...parsed, contacts_meta: currentList };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(objectToSave));
+      }
+    } catch (err) {
+      console.error('Failed to update localStorage inside handleInvite:', err);
+    }
+  
   };
 
 
