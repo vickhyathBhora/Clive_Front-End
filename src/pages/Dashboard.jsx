@@ -66,7 +66,7 @@ setContacts} = useChat();
           if (rawCache) {
             const cache = JSON.parse(rawCache);
             const toRank = Number(cache.dirty_slice?.to_rank || 0);
-
+console.log(cache.contacts_meta);
             if (toRank >= 1) {
               const filteredMeta = (cache.contacts_meta || []).filter((item) => {
                 const rank = Number(item.rank);
