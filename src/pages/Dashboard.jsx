@@ -70,9 +70,9 @@ setContacts} = useChat();
             if (toRank >= 1) {
               const filteredMeta = (cache.contacts_meta || []).filter((item) => {
                 const rank = Number(item.rank);
-                return rank >= 1 && rank <= toRank;
+                return rank >0 && rank <= toRank;
               });
-
+console.log(filteredMeta);
               payloadToSend = {
                 dirty_slice: cache.dirty_slice,
                 contacts_meta: filteredMeta
