@@ -165,25 +165,18 @@ export const initMessagesSocketListeners = (socket, setMessages, setContacts, se
     const newMessage = response.data;
     const targetId = String(newMessage.contact_id);
  const currentSelectedId = selectedChat ? String(selectedChat.contact_id) : null;
-const senderContact = contacts.find(
-  (contact) => String(contact.contact_id) === targetId
-);
 
 const isActiveChat = Boolean(selectedChat) && currentSelectedId === targetId;
    if (!isActiveChat) {
   if ('Notification' in window) {
     if (Notification.permission === 'granted') {
       // Send notification directly if already granted
-      new Notification(`New message from ${senderContact.name || 'Contact'}`, {
-        icon: senderContact.avatar_url || '/default-avatar.png',
-      });
+      new Notification(`New message in ChatLive`);
     } else if (Notification.permission !== 'denied') {
       // Ask user for permission if not explicitly denied yet
       Notification.requestPermission().then((permission) => {
         if (permission === 'granted') {
-          new Notification(`New message from ${senderContact.name || 'Contact'}`, {
-            icon: senderContact.avatar_url || '/default-avatar.png',
-          });
+        new Notification(`New message in ChatLive`);
         }
       });
     }
@@ -193,7 +186,7 @@ const isActiveChat = Boolean(selectedChat) && currentSelectedId === targetId;
     if (isActiveChat && setMessages) {
       setMessages((prevMessages) => {
         const updated = [...prevMessages, newMessage];
-        if (updated.length > 10) {
+        if (updated.length > 20) {
           updated.shift();
         }
         return updated;
@@ -208,7 +201,7 @@ const isActiveChat = Boolean(selectedChat) && currentSelectedId === targetId;
       if (setContacts) {
         setContacts((prevContacts) => {
           const targetIndex = prevContacts.findIndex(
-            (c) => String(c.contact_id || c.id) === targetId
+            (c) => String(c.contact_id) === targetId
           );
 
           if (targetIndex === -1) {
