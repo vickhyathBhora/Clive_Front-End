@@ -284,3 +284,8 @@
     transform: translateX(0) scale(1);
   }
 }
+@media (min-width: 769px) {
+  .new-message-toast {
+    display: none !important;
+  }
+}

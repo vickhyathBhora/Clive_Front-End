@@ -172,7 +172,7 @@ const isActiveChat = Boolean(selectedChat) && currentSelectedId === targetId;
   );
 
   // Store in state
-  setSenderContact(matchedContact || null);
+  setSenderContact(matchedContact?.contact|| null);
 
   // Show toast notification
   setShowNewMsg(true);
