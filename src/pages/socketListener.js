@@ -164,13 +164,10 @@ export const initMessagesSocketListeners = (socket, setMessages, setContacts, se
 
     const newMessage = response.data;
     const targetId = String(newMessage.contact_id);
- 
-    // Direct state evaluation (No .current)
-    const isActiveChat =
-      selectedChat &&
-      String(selectedChat.contact_id) === targetId;
+ const currentSelectedId = selectedChat ? String(selectedChat.contact_id) : null;
 
 
+const isActiveChat = Boolean(selectedChat) && currentSelectedId === targetId;
     // 1. Web Push Notification (Only for background chats)
    if (!isActiveChat) {
   if ('Notification' in window) {
