@@ -149,7 +149,6 @@ export const Messages = () => {
       />
       <span className="toast-online-badge"></span>
     </div>
-{console.log(senderContact)}
     <div className="toast-content">
       <div className="toast-header">
         <span className="toast-name">{senderContact.name || 'New Message'}</span>
