@@ -52,7 +52,7 @@ export const initContactsSocketListeners = (socket, setContacts, setMessages) =>
  * @param {Object} socket - Active Socket.io instance
  * @param {Function} setMessages - State setter function for messages list
  */
-export const initMessagesSocketListeners = (socket, setMessages, setContacts, selectedChat,contacts) => {
+export const initMessagesSocketListeners = (socket, setMessages, setContacts, selectedChat,contacts,setSenderContact,setShowNewMsg) => {
   if (!socket) return () => { };
 
   // Handle incoming messages response for selected chat

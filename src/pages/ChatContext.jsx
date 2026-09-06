@@ -10,8 +10,8 @@ export const ChatProvider = ({ children } = {}) => {
   const [selectedChat, setSelectedChat] = useState();
   const [isAccepting, setIsAccepting] = useState(false);
   const [isRejecting, setIsRejecting] = useState(false);
-  const [SenderContact,setSenderContact]=useState(null)
-  const [showNewMsg,setShowNewMsg ]=useState(null);
+  const [senderContact,setSenderContact]=useState(null)
+  const [showNewMsg,setShowNewMsg ]=useState(false);
   const [contacts, setContacts] = useState([]);
   const [reqContacts, setReqContacts] = useState([]);
   // 2. Function to organize contacts based on rank
@@ -74,7 +74,7 @@ export const ChatProvider = ({ children } = {}) => {
     <ChatContext.Provider
       value={{
         showNewMsg,
-        SenderContact,
+        senderContact,
         setSenderContact,
         setShowNewMsg,
         isAccepting,

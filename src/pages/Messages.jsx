@@ -17,7 +17,7 @@ export const Messages = () => {
     isAccepting,
     setIsAccepting,
     isRejecting,
-    showNewMsg,SenderContact
+    showNewMsg,senderContact
   } = useChat();
 
   const messagesEndRef = useRef(null);
@@ -139,12 +139,12 @@ export const Messages = () => {
 
   return (
     <div className="messages-container">
-      {showNewMsg && SenderContact && (
+      {showNewMsg && senderContact && (
   <div className="new-message-toast">
     <div className="toast-avatar-wrapper">
       <img
-        src={SenderContact.avatar_url || '/default-avatar.png'}
-        alt={SenderContact.name || 'User'}
+        src={senderContact.avatar_url || '/default-avatar.png'}
+        alt={senderContact.name || 'User'}
         className="toast-avatar"
       />
       <span className="toast-online-badge"></span>
@@ -152,11 +152,11 @@ export const Messages = () => {
 
     <div className="toast-content">
       <div className="toast-header">
-        <span className="toast-name">{SenderContact.name || 'New Message'}</span>
+        <span className="toast-name">{senderContact.name || 'New Message'}</span>
         <span className="toast-label">Now</span>
       </div>
       <p className="toast-message">
-        {SenderContact.content || 'Sent you a new message'}
+       Sent you a new message
       </p>
     </div>
   </div>
