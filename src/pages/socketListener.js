@@ -168,20 +168,19 @@ export const initMessagesSocketListeners = (socket, setMessages, setContacts, se
 
 
 const isActiveChat = Boolean(selectedChat) && currentSelectedId === targetId;
-    // 1. Web Push Notification (Only for background chats)
    if (!isActiveChat) {
   if ('Notification' in window) {
     if (Notification.permission === 'granted') {
       // Send notification directly if already granted
-      new Notification(`New message from ${newMessage.sender_name || 'Contact'}`, {
-        icon: newMessage.sender_avatar || '/default-avatar.png',
+      new Notification(`New message from ${newMessage.name || 'Contact'}`, {
+        icon: newMessage.avatar_url || '/default-avatar.png',
       });
     } else if (Notification.permission !== 'denied') {
       // Ask user for permission if not explicitly denied yet
       Notification.requestPermission().then((permission) => {
         if (permission === 'granted') {
-          new Notification(`New message from ${newMessage.sender_name || 'Contact'}`, {
-            icon: newMessage.sender_avatar || '/default-avatar.png',
+          new Notification(`New message from ${newMessage.name || 'Contact'}`, {
+            icon: newMessage.avatar_url || '/default-avatar.png',
           });
         }
       });
