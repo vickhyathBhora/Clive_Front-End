@@ -17,6 +17,7 @@ export const Messages = () => {
     isAccepting,
     setIsAccepting,
     isRejecting,
+    showNewMsg,SenderContact
   } = useChat();
 
   const messagesEndRef = useRef(null);
@@ -138,6 +139,28 @@ export const Messages = () => {
 
   return (
     <div className="messages-container">
+      {showNewMsg && SenderContact && (
+  <div className="new-message-toast">
+    <div className="toast-avatar-wrapper">
+      <img
+        src={SenderContact.avatar_url || '/default-avatar.png'}
+        alt={SenderContact.name || 'User'}
+        className="toast-avatar"
+      />
+      <span className="toast-online-badge"></span>
+    </div>
+
+    <div className="toast-content">
+      <div className="toast-header">
+        <span className="toast-name">{SenderContact.name || 'New Message'}</span>
+        <span className="toast-label">Now</span>
+      </div>
+      <p className="toast-message">
+        {SenderContact.content || 'Sent you a new message'}
+      </p>
+    </div>
+  </div>
+)}
       <div className="messages-header" style={{ display: 'flex', alignItems: 'center' }}>
         {/* CHANGED: Added Back Button for Mobile view */}
         <IconButton 
@@ -193,6 +216,7 @@ export const Messages = () => {
       </Box>
     </div>
   );
+  
 };
 
 export default Messages;

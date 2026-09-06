@@ -10,10 +10,10 @@ export const ChatProvider = ({ children } = {}) => {
   const [selectedChat, setSelectedChat] = useState();
   const [isAccepting, setIsAccepting] = useState(false);
   const [isRejecting, setIsRejecting] = useState(false);
-
+  const [SenderContact,setSenderContact]=useState(null)
+  const [showNewMsg,setShowNewMsg ]=useState(null);
   const [contacts, setContacts] = useState([]);
   const [reqContacts, setReqContacts] = useState([]);
-
   // 2. Function to organize contacts based on rank
   const handleSelectContact = (item) => {
     if (!item) return;
@@ -49,7 +49,7 @@ export const ChatProvider = ({ children } = {}) => {
     const cleanupContacts = initContactsSocketListeners(socket, setContacts, setMessages);
 
     // 2. Message operation listeners (fetch/receive messages)
-    const cleanupMessages = initMessagesSocketListeners(socket, setMessages, setContacts, selectedChat,contacts);
+    const cleanupMessages = initMessagesSocketListeners(socket, setMessages, setContacts, selectedChat,contacts,setSenderContact,setShowNewMsg);
 
     // 3. Invite operation listeners (send, accept, reject invites)
     const cleanupInvites = initInviteSocketListeners(
@@ -73,6 +73,10 @@ export const ChatProvider = ({ children } = {}) => {
   return (
     <ChatContext.Provider
       value={{
+        showNewMsg,
+        SenderContact,
+        setSenderContact,
+        setShowNewMsg,
         isAccepting,
         setIsAccepting,
         isRejecting,

@@ -167,21 +167,21 @@ export const initMessagesSocketListeners = (socket, setMessages, setContacts, se
  const currentSelectedId = selectedChat ? String(selectedChat.contact_id) : null;
 
 const isActiveChat = Boolean(selectedChat) && currentSelectedId === targetId;
-   if (!isActiveChat) {
-  if ('Notification' in window) {
-    if (Notification.permission === 'granted') {
-      // Send notification directly if already granted
-      new Notification(`New message in ChatLive`);
-    } else if (Notification.permission !== 'denied') {
-      // Ask user for permission if not explicitly denied yet
-      Notification.requestPermission().then((permission) => {
-        if (permission === 'granted') {
-        new Notification(`New message in ChatLive`);
-        }
-      });
-    }
-  }
-}
+  const matchedContact = contacts.find(
+    (c) => String(c.contact_id ) === targetId
+  );
+
+  // Store in state
+  setSenderContact(matchedContact || null);
+
+  // Show toast notification
+  setShowNewMsg(true);
+
+  // Auto-hide after 2 seconds (2000 ms)
+  setTimeout(() => {
+    setShowNewMsg(false);
+  }, 2000);
+   
     // 2. Append to Active Messages State (Max 10)
     if (isActiveChat && setMessages) {
       setMessages((prevMessages) => {
