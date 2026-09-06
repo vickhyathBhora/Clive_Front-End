@@ -52,7 +52,7 @@ export const initContactsSocketListeners = (socket, setContacts, setMessages) =>
  * @param {Object} socket - Active Socket.io instance
  * @param {Function} setMessages - State setter function for messages list
  */
-export const initMessagesSocketListeners = (socket, setMessages, setContacts, selectedChat) => {
+export const initMessagesSocketListeners = (socket, setMessages, setContacts, selectedChat,contacts) => {
   if (!socket) return () => { };
 
   // Handle incoming messages response for selected chat
@@ -165,22 +165,24 @@ export const initMessagesSocketListeners = (socket, setMessages, setContacts, se
     const newMessage = response.data;
     const targetId = String(newMessage.contact_id);
  const currentSelectedId = selectedChat ? String(selectedChat.contact_id) : null;
-
+const senderContact = contacts.find(
+  (contact) => String(contact.contact_id) === targetId
+);
 
 const isActiveChat = Boolean(selectedChat) && currentSelectedId === targetId;
    if (!isActiveChat) {
   if ('Notification' in window) {
     if (Notification.permission === 'granted') {
       // Send notification directly if already granted
-      new Notification(`New message from ${newMessage.name || 'Contact'}`, {
-        icon: newMessage.avatar_url || '/default-avatar.png',
+      new Notification(`New message from ${senderContact.name || 'Contact'}`, {
+        icon: senderContact.avatar_url || '/default-avatar.png',
       });
     } else if (Notification.permission !== 'denied') {
       // Ask user for permission if not explicitly denied yet
       Notification.requestPermission().then((permission) => {
         if (permission === 'granted') {
-          new Notification(`New message from ${newMessage.name || 'Contact'}`, {
-            icon: newMessage.avatar_url || '/default-avatar.png',
+          new Notification(`New message from ${senderContact.name || 'Contact'}`, {
+            icon: senderContact.avatar_url || '/default-avatar.png',
           });
         }
       });

@@ -49,7 +49,7 @@ export const ChatProvider = ({ children } = {}) => {
     const cleanupContacts = initContactsSocketListeners(socket, setContacts, setMessages);
 
     // 2. Message operation listeners (fetch/receive messages)
-    const cleanupMessages = initMessagesSocketListeners(socket, setMessages, setContacts, selectedChat);
+    const cleanupMessages = initMessagesSocketListeners(socket, setMessages, setContacts, selectedChat,contacts);
 
     // 3. Invite operation listeners (send, accept, reject invites)
     const cleanupInvites = initInviteSocketListeners(
