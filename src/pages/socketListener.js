@@ -172,14 +172,25 @@ export const initMessagesSocketListeners = (socket, setMessages, setContacts, se
 
 
     // 1. Web Push Notification (Only for background chats)
-    if (!isActiveChat && 'Notification' in window && Notification.permission === 'granted') {
+   if (!isActiveChat) {
+  if ('Notification' in window) {
+    if (Notification.permission === 'granted') {
+      // Send notification directly if already granted
       new Notification(`New message from ${newMessage.sender_name || 'Contact'}`, {
-        body: newMessage.content,
         icon: newMessage.sender_avatar || '/default-avatar.png',
       });
-    } else if (!isActiveChat) {
+    } else if (Notification.permission !== 'denied') {
+      // Ask user for permission if not explicitly denied yet
+      Notification.requestPermission().then((permission) => {
+        if (permission === 'granted') {
+          new Notification(`New message from ${newMessage.sender_name || 'Contact'}`, {
+            icon: newMessage.sender_avatar || '/default-avatar.png',
+          });
+        }
+      });
     }
-
+  }
+}
     // 2. Append to Active Messages State (Max 10)
     if (isActiveChat && setMessages) {
       setMessages((prevMessages) => {
