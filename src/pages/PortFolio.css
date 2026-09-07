@@ -401,3 +401,74 @@ color: #ffffff;
     display: none;
   }
 }
+/* Ensure the hero section matches equal heights */
+/* CONTAINER & LAYOUT FIXES */
+.hero-grid {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 2rem;
+  width: 100%;
+}
+
+.hero-right {
+  width: 100%;
+  max-width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.video-card-frame {
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+  background: #0d1117;
+}
+
+.hero-demo-video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+/* RESPONSIVE MEDIA QUERIES */
+@media (max-width: 900px) {
+  .hero-grid {
+    flex-direction: column;
+    padding: 1rem 0;
+  }
+
+  .hero-left, .hero-right {
+    width: 100%;
+  }
+
+  .video-card-frame {
+    /* Height scales fluidly according to width on mobile */
+    height: auto; 
+    min-height: unset;
+  }
+}
+
+@media (max-width: 600px) {
+  .dev-hero {
+    padding: 1rem;
+  }
+
+  .video-card-frame {
+    border-radius: 8px;
+  }
+  
+  .video-toggle-btn {
+    width: 36px;
+    height: 36px;
+    bottom: 8px;
+    right: 8px;
+  }
+}

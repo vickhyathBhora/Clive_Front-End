@@ -21,7 +21,12 @@
   font-size: 16px;
   font-weight: 600;
 }
-
+.message-timestamp {
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.6);
+  margin-top: 4px;
+  align-self: flex-end;
+}
 /* Scrollable message history taking all available space */
 .messages-list {
   flex: 1;
@@ -59,7 +64,9 @@
 
 /* Chat Bubble Styling */
 .message-bubble {
-  max-width: 65%;
+  display: flex;
+  flex-direction: column;
+  max-width: 60%;
   padding: 10px 16px;
   border-radius: 18px;
   font-size: 14px;

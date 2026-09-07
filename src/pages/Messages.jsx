@@ -175,6 +175,15 @@ export const Messages = () => {
       <div className="messages-list">
         {messageList.map((msg, index) => {
           const isMyMessage = String(msg.sender_id) === String(currentUserId);
+          const formattedTimestamp = msg.created_at
+      ? new Date(msg.created_at).toLocaleString('en-US', {
+          month: 'short',   // Jul, Aug
+          day: 'numeric',   // 10, 25
+          hour: '2-digit',  // 14
+          minute: '2-digit',// 30
+          hour12: false     // 24-hour format
+        })
+      : '';
           return (
             <div
               key={msg.id || index}
@@ -182,6 +191,9 @@ export const Messages = () => {
             >
               <div className="message-bubble">
                 <span className="text">{msg.content}</span>
+                {formattedTimestamp && (
+            <span className="message-timestamp">{formattedTimestamp}</span>
+          )}
               </div>
             </div>
           );
