@@ -167,6 +167,7 @@ export const initMessagesSocketListeners = (socket, setMessages, setContacts, se
  const currentSelectedId = selectedChat ? String(selectedChat.contact_id) : null;
 
 const isActiveChat = Boolean(selectedChat) && currentSelectedId === targetId;
+if(!isActiveChat){
   const matchedContact = contacts.find(
     (c) => String(c.contact_id ) === targetId
   );
@@ -181,7 +182,7 @@ const isActiveChat = Boolean(selectedChat) && currentSelectedId === targetId;
   setTimeout(() => {
     setShowNewMsg(false);
   }, 2000);
-   
+}
     // 2. Append to Active Messages State (Max 10)
     if (isActiveChat && setMessages) {
       setMessages((prevMessages) => {
