@@ -48,11 +48,11 @@
   }
 }
   .hero-left, .hero-right {
-  background: rgba(15, 23, 42, 0.75);
+  background: rgba(27, 25, 25, 0.75);
   padding:15px;
   border-radius: 16px;
   border: 1px solid rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(3px);
+  backdrop-filter: blur(.1px);
   }
 .glow-blur {
   position: absolute;
