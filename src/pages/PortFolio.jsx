@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Typography, Button, Container, CircularProgress, Alert } from '@mui/material';
 import GoogleIcon from '@mui/icons-material/Google';
 import FlashOnIcon from '@mui/icons-material/FlashOn';
@@ -9,11 +9,14 @@ import TerminalIcon from '@mui/icons-material/Terminal';
 import CodeIcon from '@mui/icons-material/Code';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import PauseIcon from '@mui/icons-material/Pause';
+import VolumeUpIcon from '@mui/icons-material/VolumeUp';
+import VolumeOffIcon from '@mui/icons-material/VolumeOff';
 import { useGoogleLogin } from '@react-oauth/google';
 import { useNavigate } from 'react-router-dom';
 import { apiPost } from '../utils/api';
 import { GOOGLE_AUTH_URL } from '../utils/constant';
-
+import bgDesktop from '../assets/BGImage.jpeg';
+import bgMobile from '../assets/BGImg.jpeg';
 import profileImg from '../assets/profile.jpeg';
 import demoVideo from '../assets/vedio.mp4';
 import './PortFolio.css';
@@ -22,10 +25,19 @@ export function Portfolio() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  
-  // Playback state and ref
+
+  // Video State
   const [isPlaying, setIsPlaying] = useState(true);
+  const [isMuted, setIsMuted] = useState(false); // Default to unmuted
   const videoRef = useRef(null);
+
+  // Sync state directly to native HTML video element
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.muted = isMuted;
+      videoRef.current.volume = 1.0;
+    }
+  }, [isMuted]);
 
   const handleGoogleLogin = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
@@ -54,15 +66,37 @@ export function Portfolio() {
     if (videoRef.current) {
       if (isPlaying) {
         videoRef.current.pause();
+        setIsPlaying(false);
       } else {
-        videoRef.current.play();
+        videoRef.current
+          .play()
+          .then(() => setIsPlaying(true))
+          .catch((err) => console.error("Playback error:", err));
       }
-      setIsPlaying(!isPlaying);
+    }
+  };
+
+  const toggleMute = () => {
+    if (videoRef.current) {
+      const newMuteState = !isMuted;
+      videoRef.current.muted = newMuteState;
+      videoRef.current.volume = 1.0;
+      setIsMuted(newMuteState);
+
+      if (!newMuteState && videoRef.current.paused) {
+        videoRef.current.play().then(() => setIsPlaying(true));
+      }
     }
   };
 
   return (
-    <div className="dev-portfolio">
+   <div 
+    className="dev-portfolio"
+    style={{
+      '--bg-desktop': `url(${bgDesktop})`,
+      '--bg-mobile': `url(${bgMobile})`
+    }}
+  >
       <div className="bg-grid-overlay"></div>
       <div className="glow-blur glow-top-left"></div>
       <div className="glow-blur glow-bottom-right"></div>
@@ -88,7 +122,7 @@ export function Portfolio() {
 
       <main className="dev-hero">
         <Container maxWidth="xl" className="hero-grid">
-          
+
           <div className="hero-left">
             <div className="developer-profile-header">
               <div className="avatar-frame">
@@ -137,21 +171,69 @@ export function Portfolio() {
             </div>
           </div>
 
-          {/* RIGHT COLUMN: VIDEO DISPLAY WITH PLAY/PAUSE */}
+          {/* RIGHT COLUMN: VIDEO WITH NATIVE CONTROLS + CUSTOM BUTTON OVERLAY */}
           <div className="hero-right">
-            <div className="video-card-frame">
-              <video 
+            <div className="video-card-frame" style={{ position: 'relative' }}>
+              <video
                 ref={videoRef}
-                src={demoVideo} 
-                autoPlay 
-                muted 
-                loop 
-                playsInline 
+                src={demoVideo}
+                autoPlay
+                controls
+                loop
+                playsInline
                 className="hero-demo-video"
+                style={{ width: '100%', borderRadius: '12px' }}
               />
-              <button className="video-toggle-btn" onClick={togglePlay}>
-                {isPlaying ? <PauseIcon /> : <PlayArrowIcon />}
-              </button>
+              <div 
+                className="video-controls"
+                style={{
+                  position: 'absolute',
+                  top: '12px',
+                  right: '12px',
+                  display: 'flex',
+                  gap: '8px',
+                  zIndex: 20
+                }}
+              >
+                <button 
+                  onClick={togglePlay} 
+                  type="button" 
+                  style={{
+                    background: 'rgba(0, 0, 0, 0.7)',
+                    border: '1px solid rgba(255, 255, 255, 0.3)',
+                    color: '#fff',
+                    borderRadius: '50%',
+                    width: '38px',
+                    height: '38px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    cursor: 'pointer'
+                  }}
+                  title={isPlaying ? "Pause" : "Play"}
+                >
+                  {isPlaying ? <PauseIcon fontSize="small" /> : <PlayArrowIcon fontSize="small" />}
+                </button>
+                <button 
+                  onClick={toggleMute} 
+                  type="button" 
+                  style={{
+                    background: 'rgba(0, 0, 0, 0.7)',
+                    border: '1px solid rgba(255, 255, 255, 0.3)',
+                    color: '#fff',
+                    borderRadius: '50%',
+                    width: '38px',
+                    height: '38px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    cursor: 'pointer'
+                  }}
+                  title={isMuted ? "Unmute" : "Mute"}
+                >
+                  {isMuted ? <VolumeOffIcon fontSize="small" /> : <VolumeUpIcon fontSize="small" />}
+                </button>
+              </div>
             </div>
           </div>
 

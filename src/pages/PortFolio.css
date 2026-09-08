@@ -17,32 +17,43 @@
   --font-mono: 'JetBrains Mono', monospace;
 }
 
-/* BASE CONTAINER */
+
 .dev-portfolio {
   min-height: 100vh;
   width: 100%;
-  background-color: var(--bg-dark);
   color: var(--text-main);
   font-family: var(--font-sans);
   position: relative;
   overflow-x: hidden;
   display: flex;
   flex-direction: column;
-}
 
-/* BACKGROUND EFFECTS */
-.bg-grid-overlay {
-  position: absolute;
-  inset: 0;
+  /* Uses JS import for Desktop */
   background-image: 
-    linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-  background-size: 32px 32px;
-  mask-image: radial-gradient(ellipse 60% 50% at 50% 0%, #000 70%, transparent 100%);
-  pointer-events: none;
-  z-index: 1;
+    linear-gradient(rgba(2, 6, 23, 0.20), rgba(2, 6, 23, 0.35)),
+    var(--bg-desktop);
+  background-size: cover;
+  background-position: top left;
+  background-repeat: no-repeat;
 }
 
+/* Switches to Mobile Image */
+@media (max-width: 768px) {
+  .dev-portfolio {
+    background-image: 
+      linear-gradient(rgba(2, 6, 23, 0.20), rgba(2, 6, 23, 0.35)),
+      var(--bg-mobile) !important;
+    background-size: cover !important;
+    background-position: center top !important;
+  }
+}
+  .hero-left, .hero-right {
+  background: rgba(15, 23, 42, 0.75);
+  padding:15px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(3px);
+  }
 .glow-blur {
   position: absolute;
   width: 450px;
@@ -443,10 +454,6 @@ color: #ffffff;
   .hero-grid {
     flex-direction: column;
     padding: 1rem 0;
-  }
-
-  .hero-left, .hero-right {
-    width: 100%;
   }
 
   .video-card-frame {
