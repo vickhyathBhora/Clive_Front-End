@@ -28,7 +28,7 @@ export function Portfolio() {
 
   // Video State
   const [isPlaying, setIsPlaying] = useState(true);
-  const [isMuted, setIsMuted] = useState(false); // Default to unmuted
+  const [isMuted, setIsMuted] = useState(true); // Default to unmuted
   const videoRef = useRef(null);
 
   // Sync state directly to native HTML video element
